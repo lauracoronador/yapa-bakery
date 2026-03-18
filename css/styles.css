@@ -643,6 +643,16 @@ footer ul li { margin-bottom: .45rem; }
   margin: 0 auto;
 }
 
+.home-footer .footer-inner {
+  grid-template-columns: 2fr 1fr 1fr;
+}
+
+.home-footer-logo-wrap {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
 /* ===== UTILITIES ===== */
 .text-center { text-align: center; }
 .mt-2 { margin-top: 2rem; }
