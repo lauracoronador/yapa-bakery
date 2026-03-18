@@ -249,6 +249,13 @@ function initNav() {
   const hamburger = document.getElementById('hamburger');
   const navLinks  = document.getElementById('nav-links');
 
+  // Safety fallback: convert any legacy "Order Now" nav CTA into the cart link.
+  const legacyCta = document.querySelector('.nav-links .nav-cta');
+  if (legacyCta) {
+    legacyCta.className = 'nav-cart';
+    legacyCta.innerHTML = '<a href="order.html" aria-label="View cart">🛒 <span id="nav-cart-count">0</span></a>';
+  }
+
   if (hamburger && navLinks) {
     hamburger.addEventListener('click', () => {
       hamburger.classList.toggle('open');
