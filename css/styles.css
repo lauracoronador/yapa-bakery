@@ -717,6 +717,10 @@ footer ul li { margin-bottom: .45rem; }
   color: var(--muted);
 }
 
+.home-hero-plain .hero-intro {
+  text-align: center;
+}
+
 .home-hero-plain .hero-policy {
   max-width: 700px;
   margin-top: -1rem;
