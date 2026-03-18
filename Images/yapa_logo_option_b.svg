@@ -1,43 +1,40 @@
-<svg width="100%" viewBox="130 15 420 225" xmlns="http://www.w3.org/2000/svg">
-  <defs>
-    <mask id="imagine-text-gaps-z8suap" maskUnits="userSpaceOnUse"><rect x="0" y="0" width="680" height="280" fill="white"/><rect x="94.73099517822266" y="69.63855743408203" width="228.8104705810547" height="70.11152648925781" fill="black" rx="2"/><rect x="154.97596740722656" y="137.69432067871094" width="109.73658752441406" height="29.07439613342285" fill="black" rx="2"/><rect x="60.38123321533203" y="174.97218322753906" width="299.2375183105469" height="13.916728973388672" fill="black" rx="2"/><rect x="235.27215576171875" y="234.19439697265625" width="209.4556884765625" height="19.1112060546875" fill="black" rx="2"/><rect x="239.09054565429688" y="249.19436645507812" width="201.8189239501953" height="19.1112060546875" fill="black" rx="2"/></mask>
-  </defs>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 82" width="200" height="82" role="img" aria-label="Yapa Bakery">
+  <title>Yapa Bakery</title>
 
-  <!-- Option B: Warm earthy wordmark — terracotta, cream, warm brown -->
-  <g transform="translate(130, 20)">
-
-    <!-- Warm background card — soft cream -->
-    <rect x="0" y="0" width="420" height="220" rx="4" fill="#F9F4EE" opacity="0.6"/>
-
-    <!-- Decorative top border line — terracotta -->
-    <line x1="40" y1="28" x2="380" y2="28" stroke="#C4662A" stroke-width="1.2" opacity="0.5"/>
-
-    <!-- Tiny Bolivia-inspired sun motif -->
-    <circle cx="210" cy="52" r="10" fill="none" stroke="#C4662A" stroke-width="1" opacity="0.7"/>
-    <circle cx="210" cy="52" r="4" fill="#C4662A" opacity="0.8"/>
-    <!-- Sun rays -->
-    <line x1="210" y1="38" x2="210" y2="34" stroke="#C4662A" stroke-width="1" opacity="0.6"/>
-    <line x1="210" y1="66" x2="210" y2="70" stroke="#C4662A" stroke-width="1" opacity="0.6"/>
-    <line x1="196" y1="52" x2="192" y2="52" stroke="#C4662A" stroke-width="1" opacity="0.6"/>
-    <line x1="224" y1="52" x2="228" y2="52" stroke="#C4662A" stroke-width="1" opacity="0.6"/>
-    <line x1="200" y1="42" x2="197" y2="39" stroke="#C4662A" stroke-width="1" opacity="0.6"/>
-    <line x1="220" y1="62" x2="223" y2="65" stroke="#C4662A" stroke-width="1" opacity="0.6"/>
-    <line x1="220" y1="42" x2="223" y2="39" stroke="#C4662A" stroke-width="1" opacity="0.6"/>
-    <line x1="200" y1="62" x2="197" y2="65" stroke="#C4662A" stroke-width="1" opacity="0.6"/>
-
-    <!-- YAPA — big, bold, warm brown serif -->
-    <text x="210" y="125" text-anchor="middle" font-family="Georgia, 'Times New Roman', serif" font-size="58" font-weight="700" letter-spacing="12" fill="#4A2C1A">YAPA</text>
-
-    <!-- Thin terracotta rule -->
-    <line x1="70" y1="134" x2="350" y2="134" stroke="#C4662A" stroke-width="0.8" opacity="0.7" mask="url(#imagine-text-gaps-z8suap)"/>
-
-    <!-- Bakery — italic, lighter weight -->
-    <text x="210" y="160" text-anchor="middle" font-family="Georgia, 'Times New Roman', serif" font-size="22" font-weight="400" font-style="italic" fill="#7A4A2A" letter-spacing="5">Bakery</text>
-
-    <!-- Tagline -->
-    <text x="210" y="185" text-anchor="middle" font-family="-apple-system, 'Segoe UI', sans-serif" font-size="8" letter-spacing="3" fill="#C4662A" opacity="0.9">BOLIVIAN EMPANADAS &amp; HOMEMADE SWEETS</text>
-
-    <!-- Bottom border -->
-    <line x1="40" y1="200" x2="380" y2="200" stroke="#C4662A" stroke-width="1.2" opacity="0.5"/>
+  <!-- Sun rays -->
+  <g stroke="#C4662A" stroke-width="2.5" stroke-linecap="round">
+    <line x1="121"   y1="18"   x2="127" y2="18"/>
+    <line x1="117.8" y1="25.8" x2="122" y2="30"/>
+    <line x1="110"   y1="29"   x2="110" y2="35"/>
+    <line x1="102.2" y1="25.8" x2="98"  y2="30"/>
+    <line x1="99"    y1="18"   x2="93"  y2="18"/>
+    <line x1="102.2" y1="10.2" x2="98"  y2="6"/>
+    <line x1="110"   y1="7"    x2="110" y2="1"/>
+    <line x1="117.8" y1="10.2" x2="122" y2="6"/>
   </g>
+
+  <!-- Sun circle -->
+  <circle cx="110" cy="18" r="9" fill="#C4662A"/>
+
+  <!-- YAPA wordmark -->
+  <text
+    x="110" y="62"
+    font-family="Georgia, 'Times New Roman', serif"
+    font-weight="bold"
+    font-size="32"
+    fill="#4A2C1A"
+    text-anchor="middle"
+    letter-spacing="3"
+  >YAPA</text>
+
+  <!-- Bakery italic -->
+  <text
+    x="112" y="78"
+    font-family="Georgia, 'Times New Roman', serif"
+    font-style="italic"
+    font-size="16"
+    fill="#7A4A2A"
+    text-anchor="middle"
+    letter-spacing="2"
+  >Bakery</text>
 </svg>
