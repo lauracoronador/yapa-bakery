@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Yapa Bakery — Bolivian Salteñas &amp; Homemade Sweets</title>
+  <meta name="description" content="Yapa Bakery offers handmade Bolivian salteñas and homemade sweets for pickup in Santa Clara County. Pre-order online — fresh, made with love.">
+  <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+
+  <!-- Pickup Banner -->
+  <div class="pickup-banner" id="pickup-banner">Loading pickup info…</div>
+
+  <!-- Header -->
+  <header class="site-header">
+    <nav class="nav-inner">
+      <a href="index.html" class="logo">
+        <img src="Images/yapa_logo_option_b.svg" alt="Yapa Bakery">
+      </a>
+      <button class="hamburger" id="hamburger" aria-label="Toggle menu">
+        <span></span><span></span><span></span>
+      </button>
+      <ul class="nav-links" id="nav-links">
+        <li><a href="index.html">Home</a></li>
+        <li><a href="food.html">Our Food</a></li>
+        <li><a href="about.html">About</a></li>
+        <li><a href="faq.html">FAQ</a></li>
+        <li class="nav-cta"><a href="order.html">Order Now</a></li>
+      </ul>
+    </nav>
+  </header>
+
+  <main>
+
+    <!-- Hero -->
+    <section class="hero">
+      <div class="hero-bg" style="background-image: url('Images/Saltena.jpeg');"></div>
+      <div class="hero-content">
+        <div class="hero-eyebrow">Santa Clara County · Pickup Orders</div>
+        <h1>Handmade with love,<br>straight from the heart<br>of Bolivia.</h1>
+        <p>Fresh salteñas, dulce de leche alfajores, and homemade cakes — made in small batches, available for Saturday pickup twice a month.</p>
+        <div class="hero-actions">
+          <a href="order.html" class="btn btn-primary">Order for Pickup</a>
+          <a href="food.html" class="btn btn-outline" style="border-color: white; color: white;">See Our Menu</a>
+        </div>
+      </div>
+    </section>
+
+    <!-- Story Intro -->
+    <section class="section">
+      <div class="section-inner">
+        <div class="story-grid">
+          <div class="story-text">
+            <h2>A little extra, made with everything.</h2>
+            <p>In Bolivia, <em>yapa</em> means a small gift given freely — a little something extra the vendor adds to your bag with a smile. That spirit is baked into everything we make.</p>
+            <p>From our home kitchen in Santa Clara County, we craft traditional Bolivian salteñas alongside homemade cakes, cookies, and sweets — each one made to order in small batches so nothing goes to waste and everything arrives fresh.</p>
+            <a href="about.html" class="btn btn-outline">Our Story</a>
+          </div>
+          <div class="story-img">
+            <img src="Images/Alfajores-Valentines.jpeg" alt="Heart-shaped alfajores — a little yapa of love">
+          </div>
+        </div>
+
+        <!-- Next Pickup Callout -->
+        <div class="pickup-callout">
+          <div>
+            <h3>Next Pickup</h3>
+            <p id="callout-date" style="font-size: 1.1rem; color: var(--terracotta); font-family: Georgia, serif; font-weight: bold;">Loading…</p>
+            <p id="callout-msg">Saturday pickup · 11am – 1pm · Santa Clara County</p>
+          </div>
+          <a href="order.html" class="btn btn-primary">Order Now</a>
+        </div>
+      </div>
+    </section>
+
+    <!-- Food Highlights -->
+    <section class="section section-alt">
+      <div class="section-inner">
+        <div class="section-header">
+          <h2>Fresh from the oven</h2>
+          <p>A rotating selection of salteñas, sweets, and cakes — made in small batches for every pickup.</p>
+          <div class="divider"></div>
+        </div>
+        <div class="food-grid">
+          <div class="food-card">
+            <img src="Images/Saltena.jpeg" alt="Bolivian Salteña — savory baked pastry">
+            <div class="food-card-body">
+              <h3>Salteñas</h3>
+              <p>Bolivia's beloved savory pastry — a juicy, slow-braised filling tucked inside a perfectly crimped shell.</p>
+            </div>
+          </div>
+          <div class="food-card">
+            <img src="Images/Tartufo.jpeg" alt="Tartufo — Italian-style ice cream truffle">
+            <div class="food-card-body">
+              <h3>Tartufo</h3>
+              <p>Italian-inspired ice cream truffles — a decadent bite-sized dessert that's always a crowd favorite.</p>
+            </div>
+          </div>
+          <div class="food-card">
+            <img src="Images/Alfajores.jpeg" alt="Alfajores — dulce de leche sandwich cookies">
+            <div class="food-card-body">
+              <h3>Alfajores</h3>
+              <p>Melt-in-your-mouth shortbread sandwiched with silky dulce de leche — a classic South American treat.</p>
+            </div>
+          </div>
+        </div>
+        <div class="text-center mt-2">
+          <a href="food.html" class="btn btn-outline">View Full Menu</a>
+        </div>
+      </div>
+    </section>
+
+    <!-- How It Works -->
+    <section class="section">
+      <div class="section-inner">
+        <div class="section-header">
+          <h2>How pickup orders work</h2>
+          <div class="divider"></div>
+        </div>
+        <div class="food-grid" style="grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));">
+          <div style="text-align: center; padding: 1.5rem 1rem;">
+            <div style="font-size: 2.5rem; margin-bottom: .75rem;">📅</div>
+            <h3 style="margin-bottom: .5rem;">1. Check the date</h3>
+            <p>Pickup happens twice a month on Saturdays, 11am–1pm. Orders open 10 days before each pickup.</p>
+          </div>
+          <div style="text-align: center; padding: 1.5rem 1rem;">
+            <div style="font-size: 2.5rem; margin-bottom: .75rem;">🛒</div>
+            <h3 style="margin-bottom: .5rem;">2. Place your order</h3>
+            <p>Choose your items and pay securely online. Orders close Monday (5 days before) — no exceptions.</p>
+          </div>
+          <div style="text-align: center; padding: 1.5rem 1rem;">
+            <div style="font-size: 2.5rem; margin-bottom: .75rem;">🎁</div>
+            <h3 style="margin-bottom: .5rem;">3. Pickup Saturday</h3>
+            <p>Everything is made fresh for your order. Swing by on Saturday and take home something delicious.</p>
+          </div>
+        </div>
+        <div class="text-center mt-2">
+          <a href="faq.html" class="btn btn-outline">Read the FAQ</a>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- Footer -->
+  <footer>
+    <div class="footer-inner">
+      <div>
+        <img src="Images/yapa_logo_option_b.svg" alt="Yapa Bakery" class="footer-logo">
+        <p>Handmade Bolivian salteñas &amp; homemade sweets. Small batches. Made with love.</p>
+        <p class="footer-mehko">
+          <strong style="color: rgba(249,244,238,.7);">Made in a Home Kitchen</strong><br>
+          Pursuant to California's Microenterprise Home Kitchen Operations (MEHKO) law.<br>
+          Santa Clara County Permit No. <strong style="color: rgba(249,244,238,.7);">[YOUR PERMIT NUMBER]</strong>
+        </p>
+      </div>
+      <div>
+        <h4>Pages</h4>
+        <ul>
+          <li><a href="index.html">Home</a></li>
+          <li><a href="food.html">Our Food</a></li>
+          <li><a href="order.html">Order Now</a></li>
+          <li><a href="about.html">About</a></li>
+          <li><a href="faq.html">FAQ</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4>Connect</h4>
+        <ul>
+          <li><a href="#">Instagram</a></li>
+          <li><a href="mailto:hello@yapabakery.com">hello@yapabakery.com</a></li>
+        </ul>
+        <h4 style="margin-top: 1.25rem;">Bulk &amp; Events</h4>
+        <p style="font-size: .85rem;">For parties &amp; special orders, <a href="order.html#bulk">fill out our inquiry form</a>.</p>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      &copy; <span id="year"></span> Yapa Bakery. All rights reserved.
+    </div>
+  </footer>
+
+  <script src="js/main.js"></script>
+  <script>document.getElementById('year').textContent = new Date().getFullYear();</script>
+</body>
+</html>

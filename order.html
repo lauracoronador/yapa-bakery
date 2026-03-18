@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Order | Yapa Bakery</title>
+  <meta name="description" content="Order Bolivian salteñas and homemade sweets for Saturday pickup in Santa Clara County. Pre-payment required. Orders close Monday before pickup.">
+  <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+
+  <!-- Pickup Banner -->
+  <div class="pickup-banner" id="pickup-banner">Loading pickup info…</div>
+
+  <!-- Header -->
+  <header class="site-header">
+    <nav class="nav-inner">
+      <a href="index.html" class="logo">
+        <img src="Images/yapa_logo_option_b.svg" alt="Yapa Bakery">
+      </a>
+      <button class="hamburger" id="hamburger" aria-label="Toggle menu">
+        <span></span><span></span><span></span>
+      </button>
+      <ul class="nav-links" id="nav-links">
+        <li><a href="index.html">Home</a></li>
+        <li><a href="food.html">Our Food</a></li>
+        <li><a href="about.html">About</a></li>
+        <li><a href="faq.html">FAQ</a></li>
+        <li class="nav-cta"><a href="order.html">Order Now</a></li>
+      </ul>
+    </nav>
+  </header>
+
+  <main>
+
+    <div class="page-header">
+      <h1>Place Your Order</h1>
+      <p>Saturday pickup, twice a month. Everything made fresh to order.</p>
+    </div>
+
+    <div class="order-wrapper">
+
+      <!-- Order open: form -->
+      <div id="orders-open">
+        <div class="order-info-bar">
+          <h3>Next Pickup: <span id="pickup-date-display" style="color: var(--terracotta);">Loading…</span></h3>
+          <p>Orders close <strong id="close-date-display">…</strong> — we stop accepting orders 5 days early to ensure nothing goes to waste and everything arrives fresh.</p>
+        </div>
+
+        <!-- Netlify Form — note: name="order" triggers Netlify form capture -->
+        <form
+          id="order-form"
+          class="order-form-card"
+          name="pickup-order"
+          method="POST"
+          data-netlify="true"
+          netlify-honeypot="bot-field"
+        >
+          <!-- Hidden Netlify fields -->
+          <input type="hidden" name="form-name" value="pickup-order">
+          <input type="hidden" id="order-details" name="order-details" value="">
+          <p style="display:none;"><label>Don't fill this out if you're human: <input name="bot-field"></label></p>
+
+          <!-- Contact Info -->
+          <h3 style="margin-bottom: 1rem; font-size: 1.1rem; color: var(--brown);">Your Information</h3>
+          <div class="form-row">
+            <div class="form-group">
+              <label for="first-name">First Name *</label>
+              <input type="text" id="first-name" name="first-name" required autocomplete="given-name">
+            </div>
+            <div class="form-group">
+              <label for="last-name">Last Name *</label>
+              <input type="text" id="last-name" name="last-name" required autocomplete="family-name">
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label for="email">Email *</label>
+              <input type="email" id="email" name="email" required autocomplete="email">
+            </div>
+            <div class="form-group">
+              <label for="phone">Phone</label>
+              <input type="tel" id="phone" name="phone" autocomplete="tel">
+            </div>
+          </div>
+
+          <!-- Menu Items (rendered by JS) -->
+          <h3 style="margin: 1.5rem 0 .25rem; font-size: 1.1rem; color: var(--brown);">Choose Your Items</h3>
+          <p style="font-size: .85rem; margin-bottom: 1rem;">Set quantities to 0 for items you don't want. Prices include tax.</p>
+          <div id="menu-items">
+            <!-- JS renders menu items here -->
+            <p style="color: var(--muted);">Loading menu…</p>
+          </div>
+
+          <!-- Order Total -->
+          <div class="order-total-bar">
+            <span class="label">Order Total</span>
+            <span class="amount" id="order-total-amount">$0.00</span>
+          </div>
+
+          <!-- Notes -->
+          <div class="form-group">
+            <label for="notes">Special notes or dietary needs</label>
+            <textarea id="notes" name="notes" rows="3" placeholder="Allergies, substitutions, anything else we should know…"></textarea>
+          </div>
+
+          <!-- How did you hear -->
+          <div class="form-group">
+            <label for="referral">How did you find us?</label>
+            <select id="referral" name="referral">
+              <option value="">— Select one —</option>
+              <option value="instagram">Instagram</option>
+              <option value="friend">Friend or word of mouth</option>
+              <option value="nextdoor">Nextdoor</option>
+              <option value="google">Google Search</option>
+              <option value="other">Other</option>
+            </select>
+          </div>
+
+          <div class="submit-btn-wrap">
+            <button type="submit" id="submit-order-btn" class="btn btn-primary" disabled>
+              Add items to place order
+            </button>
+            <p style="font-size: .8rem; color: var(--muted); margin-top: .75rem;">
+              You'll be redirected to Stripe to complete payment securely.<br>
+              Payment is required to confirm your order.
+            </p>
+          </div>
+        </form>
+      </div>
+
+      <!-- Orders closed / not yet open -->
+      <div id="orders-closed" class="closed-notice hidden">
+        <div style="font-size: 2.5rem; margin-bottom: 1rem;">🕐</div>
+        <h3>Orders aren't open right now</h3>
+        <p id="closed-msg">Check back soon for the next pickup window.</p>
+        <a href="food.html" class="btn btn-outline">Browse Our Menu</a>
+      </div>
+
+      <!-- Bulk / Event Orders -->
+      <div class="bulk-section" id="bulk">
+        <div style="font-size: 2rem; margin-bottom: .75rem;">🎉</div>
+        <h3>Planning a party or event?</h3>
+        <p>For bulk orders (25+ salteñas, full cakes, custom quantities) or event catering inquiries, please reach out at least 2–3 weeks in advance. We'd love to be part of your celebration.</p>
+        <a
+          href="https://forms.gle/REPLACE_WITH_YOUR_FORM"
+          id="bulk-form-link"
+          class="btn btn-primary"
+          target="_blank"
+          rel="noopener"
+        >
+          Submit an Inquiry
+        </a>
+        <p style="font-size: .8rem; margin-top: .75rem;">We'll reply within 2 business days.</p>
+      </div>
+
+    </div>
+  </main>
+
+  <!-- Footer -->
+  <footer>
+    <div class="footer-inner">
+      <div>
+        <img src="Images/yapa_logo_option_b.svg" alt="Yapa Bakery" class="footer-logo">
+        <p>Handmade Bolivian salteñas &amp; homemade sweets. Small batches. Made with love.</p>
+        <p class="footer-mehko">
+          <strong style="color: rgba(249,244,238,.7);">Made in a Home Kitchen</strong><br>
+          Pursuant to California's Microenterprise Home Kitchen Operations (MEHKO) law.<br>
+          Santa Clara County Permit No. <strong style="color: rgba(249,244,238,.7);">[YOUR PERMIT NUMBER]</strong>
+        </p>
+      </div>
+      <div>
+        <h4>Pages</h4>
+        <ul>
+          <li><a href="index.html">Home</a></li>
+          <li><a href="food.html">Our Food</a></li>
+          <li><a href="order.html">Order Now</a></li>
+          <li><a href="about.html">About</a></li>
+          <li><a href="faq.html">FAQ</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4>Connect</h4>
+        <ul>
+          <li><a href="#">Instagram</a></li>
+          <li><a href="mailto:hello@yapabakery.com">hello@yapabakery.com</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      &copy; <span id="year"></span> Yapa Bakery. All rights reserved.
+    </div>
+  </footer>
+
+  <script src="js/main.js"></script>
+  <script>
+    document.getElementById('year').textContent = new Date().getFullYear();
+    // Update bulk form link from config
+    document.addEventListener('DOMContentLoaded', () => {
+      const link = document.getElementById('bulk-form-link');
+      if (link && typeof SITE_CONFIG !== 'undefined') {
+        link.href = SITE_CONFIG.googleFormUrl;
+      }
+    });
+  </script>
+</body>
+</html>
