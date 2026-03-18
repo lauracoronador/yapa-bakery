@@ -677,6 +677,28 @@ footer ul li { margin-bottom: .45rem; }
 .hero-pickup strong { color: var(--white); }
 .hero { min-height: 65vh; } /* shorter on home page */
 
+.home-hero-plain .hero-content {
+  color: var(--brown);
+}
+
+.home-hero-plain .hero-content h1 {
+  color: var(--brown);
+}
+
+.home-hero-plain .hero-content p {
+  color: var(--muted);
+}
+
+.home-hero-plain .hero-pickup {
+  background: var(--white);
+  border-color: #d9cec6;
+  color: var(--muted);
+}
+
+.home-hero-plain .hero-pickup strong {
+  color: var(--brown);
+}
+
 /* ===== HOMEPAGE — CATEGORY SECTIONS ===== */
 .home-cat { }
 .home-cat-inner {
