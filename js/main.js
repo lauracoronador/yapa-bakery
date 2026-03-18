@@ -230,12 +230,16 @@ function renderCallout() {
   const dateEl     = document.getElementById('callout-date');
   const msgEl      = document.getElementById('callout-msg');
   const heroDateEl = document.getElementById('hero-pickup-date');
+  const saltenasHeroDateEl = document.getElementById('saltenas-hero-pickup-date');
 
   const s = getOrderStatus();
 
   // Hero pill
   if (heroDateEl) {
     heroDateEl.textContent = s.pickup ? fmt(s.pickup) : 'Coming soon';
+  }
+  if (saltenasHeroDateEl) {
+    saltenasHeroDateEl.textContent = s.pickup ? fmt(s.pickup) : 'Coming soon';
   }
 
   if (!dateEl) return;
@@ -444,6 +448,45 @@ function initBakedGoodsQuickOrder() {
   refreshCount();
 }
 
+function initSaltenasQuickOrder() {
+  const qtyInputs = [...document.querySelectorAll('.saltenas-quick-order .quick-qty-input[data-order-id]')];
+  if (qtyInputs.length === 0) return;
+
+  const draft = getOrderDraft();
+
+  function normalizeQty(value) {
+    const n = parseInt(value, 10);
+    if (Number.isNaN(n) || n < 0) return 0;
+    return Math.min(30, n);
+  }
+
+  qtyInputs.forEach(input => {
+    const itemId = input.dataset.orderId;
+    if (!itemId) return;
+
+    if (draft[itemId]) {
+      input.value = normalizeQty(draft[itemId]);
+    }
+
+    const syncDraft = () => {
+      const qty = normalizeQty(input.value);
+      input.value = qty;
+      if (qty === 0) {
+        delete draft[itemId];
+      } else {
+        draft[itemId] = qty;
+      }
+      saveOrderDraft(draft);
+      renderNavCartCount();
+    };
+
+    input.addEventListener('input', syncDraft);
+    input.addEventListener('change', syncDraft);
+  });
+
+  renderNavCartCount();
+}
+
 function initCartPage() {
   const form = document.getElementById('cart-form');
   if (!form) return;
@@ -627,6 +670,7 @@ document.addEventListener('DOMContentLoaded', () => {
   renderCallout();
   initNav();
   initBakedGoodsQuickOrder();
+  initSaltenasQuickOrder();
   initCartPage();
   initOrderForm();
   initFAQ();

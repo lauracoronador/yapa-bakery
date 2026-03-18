@@ -32,19 +32,44 @@
   <main>
 
     <!-- Hero -->
-    <section class="hero" style="min-height: 60vh;">
+    <section class="hero saltenas-hero" style="min-height: 60vh;">
       <div class="hero-bg" style="background-image: url('Images/Saltena.jpeg');"></div>
       <div class="hero-content">
         <div class="hero-eyebrow">Savory · Bolivian Classic</div>
         <h1>Salteñas</h1>
         <p>Bolivia's most beloved pastry — handmade fresh every pickup.</p>
-        <a href="order.html" class="btn btn-primary">Order for Pickup →</a>
+        <div class="hero-pickup">
+          📅 Next Salteñas Pickup: <strong id="saltenas-hero-pickup-date">Loading…</strong>
+        </div>
       </div>
     </section>
 
     <!-- What's a Salteña? -->
     <section class="section">
       <div class="section-inner">
+        <div class="saltenas-quick-order">
+          <h2>Start your order</h2>
+          <p>Select how many you'd like right away, then continue to your cart.</p>
+          <div class="saltenas-quick-grid">
+            <div class="saltenas-quick-item">
+              <label for="quick-saltena-1">Single</label>
+              <div class="saltenas-quick-price">$4.50</div>
+              <input type="number" id="quick-saltena-1" class="quick-qty-input" data-order-id="saltena-1" value="0" min="0" max="30">
+            </div>
+            <div class="saltenas-quick-item">
+              <label for="quick-saltena-6">Half dozen</label>
+              <div class="saltenas-quick-price">$25.00</div>
+              <input type="number" id="quick-saltena-6" class="quick-qty-input" data-order-id="saltena-6" value="0" min="0" max="30">
+            </div>
+            <div class="saltenas-quick-item">
+              <label for="quick-saltena-12">Full dozen</label>
+              <div class="saltenas-quick-price">$48.00</div>
+              <input type="number" id="quick-saltena-12" class="quick-qty-input" data-order-id="saltena-12" value="0" min="0" max="30">
+            </div>
+          </div>
+          <a href="cart.html" class="btn btn-primary">Go to Your Order →</a>
+        </div>
+
         <div class="story-grid">
           <div class="story-text">
             <h2>What's a Salteña?</h2>
