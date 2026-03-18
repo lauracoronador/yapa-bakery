@@ -36,6 +36,11 @@
       <p>Cookies, cakes, and desserts — made fresh to order, every pickup.</p>
     </div>
 
+    <div class="quick-cart-bar" id="baked-cart-bar">
+      <div class="quick-cart-copy"><strong id="baked-cart-count">0</strong> items selected</div>
+      <a href="order.html" class="btn btn-primary">Go to Order →</a>
+    </div>
+
     <!-- Cookies -->
     <section class="goods-section">
       <div class="goods-section-inner">
@@ -48,6 +53,10 @@
               <h3>Alfajores</h3>
               <p>Melt-in-your-mouth shortbread rounds sandwiched with slow-cooked dulce de leche, dusted with powdered sugar. A South American classic.</p>
               <div class="item-price">$3.50 each &nbsp;·&nbsp; $19 / box of 6</div>
+              <div class="quick-qty-row">
+                <label class="quick-qty-label" for="quick-alfajores-1">Qty</label>
+                <input type="number" id="quick-alfajores-1" class="quick-qty-input" data-order-id="alfajores-1" value="0" min="0" max="30">
+              </div>
             </div>
           </div>
 
@@ -57,6 +66,10 @@
               <h3>Vegan Butter Cookies</h3>
               <p>Crisp edges, tender center — made with high-quality vegan butter and real vanilla. Proof that plant-based can mean wonderfully rich.</p>
               <div class="item-price">$18 / box of 6</div>
+              <div class="quick-qty-row">
+                <label class="quick-qty-label" for="quick-vegan-cookies">Qty</label>
+                <input type="number" id="quick-vegan-cookies" class="quick-qty-input" data-order-id="vegan-cookies" value="0" min="0" max="30">
+              </div>
             </div>
           </div>
 
@@ -66,6 +79,10 @@
               <h3>Evie's Cookies</h3>
               <p>A house classic — the kind of cookie that disappears fast at any gathering. Rotating flavors each pickup.</p>
               <div class="item-price">$18 / box of 6</div>
+              <div class="quick-qty-row">
+                <label class="quick-qty-label" for="quick-evie-cookies">Qty</label>
+                <input type="number" id="quick-evie-cookies" class="quick-qty-input" data-order-id="evie-cookies" value="0" min="0" max="30">
+              </div>
             </div>
           </div>
 
@@ -75,6 +92,7 @@
               <h3>Seasonal Alfajores</h3>
               <p>Special shapes and flavors for holidays and seasons — heart-shaped for Valentine's, decorated for celebrations. Ask what's coming next.</p>
               <div class="item-price">Seasonal pricing</div>
+              <div class="quick-unavailable">Seasonal item: inquire on Instagram.</div>
             </div>
           </div>
 
@@ -94,6 +112,10 @@
               <h3>Tres Leches Cake</h3>
               <p>A light sponge soaked in a blend of three milks until impossibly moist, crowned with fresh whipped cream. The ultimate Latin American celebration cake.</p>
               <div class="item-price">$55 · whole (serves 8–10)</div>
+              <div class="quick-qty-row">
+                <label class="quick-qty-label" for="quick-tres-leches">Qty</label>
+                <input type="number" id="quick-tres-leches" class="quick-qty-input" data-order-id="tres-leches" value="0" min="0" max="30">
+              </div>
             </div>
           </div>
 
@@ -103,6 +125,10 @@
               <h3>Tartufo</h3>
               <p>Italian-inspired ice cream truffle — a rich center hidden beneath a chocolate shell. Elegant, dramatic, and gone too soon.</p>
               <div class="item-price">$9 each</div>
+              <div class="quick-qty-row">
+                <label class="quick-qty-label" for="quick-tartufo">Qty</label>
+                <input type="number" id="quick-tartufo" class="quick-qty-input" data-order-id="tartufo" value="0" min="0" max="30">
+              </div>
             </div>
           </div>
 
@@ -112,6 +138,10 @@
               <h3>Truffle Cake</h3>
               <p>A densely chocolatey layer cake for serious chocolate lovers. Rich, fudgy, and deeply satisfying.</p>
               <div class="item-price">$8 / slice &nbsp;·&nbsp; Whole by request</div>
+              <div class="quick-qty-row">
+                <label class="quick-qty-label" for="quick-truffle-slice">Qty</label>
+                <input type="number" id="quick-truffle-slice" class="quick-qty-input" data-order-id="truffle-slice" value="0" min="0" max="30">
+              </div>
             </div>
           </div>
 
@@ -121,6 +151,10 @@
               <h3>Red Velvet Cake</h3>
               <p>Classic southern-inspired red velvet with a silky cream cheese frosting. A showstopper at any celebration.</p>
               <div class="item-price">$60 · whole (serves 8–10)</div>
+              <div class="quick-qty-row">
+                <label class="quick-qty-label" for="quick-red-velvet">Qty</label>
+                <input type="number" id="quick-red-velvet" class="quick-qty-input" data-order-id="red-velvet" value="0" min="0" max="30">
+              </div>
             </div>
           </div>
 
@@ -130,6 +164,10 @@
               <h3>Marble Cake</h3>
               <p>Classic vanilla and chocolate swirl — tender crumb, beautiful cross-section, and the perfect balance of flavors.</p>
               <div class="item-price">$50 · whole</div>
+              <div class="quick-qty-row">
+                <label class="quick-qty-label" for="quick-marble-cake">Qty</label>
+                <input type="number" id="quick-marble-cake" class="quick-qty-input" data-order-id="marble-cake" value="0" min="0" max="30">
+              </div>
             </div>
           </div>
 
@@ -139,6 +177,10 @@
               <h3>Cheese Flan</h3>
               <p>Silky baked custard with cream cheese and caramelized topping for a smooth, rich bite with just the right sweetness.</p>
               <div class="item-price">$8 each</div>
+              <div class="quick-qty-row">
+                <label class="quick-qty-label" for="quick-cheese-flan">Qty</label>
+                <input type="number" id="quick-cheese-flan" class="quick-qty-input" data-order-id="cheese-flan" value="0" min="0" max="30">
+              </div>
             </div>
           </div>
 

@@ -65,6 +65,7 @@ const SITE_CONFIG = {
         { id: 'truffle-slice',name: 'Truffle Cake Slice',  desc: 'Rich chocolate truffle',                            price: 8.00 },
         { id: 'red-velvet',   name: 'Red Velvet Cake',     desc: 'Whole cake — serves 8–10',                          price: 60.00 },
         { id: 'marble-cake',  name: 'Marble Cake',         desc: 'Classic vanilla/chocolate swirl — whole',           price: 50.00 },
+        { id: 'cheese-flan',  name: 'Cheese Flan',         desc: 'Silky baked custard with caramelized topping',      price: 8.00 },
       ],
     },
   ],
@@ -90,6 +91,31 @@ function toDateKey(d) {
 }
 
 const MS_DAY = 86400000;
+const ORDER_DRAFT_KEY = 'yapa-order-draft';
+
+function getOrderDraft() {
+  try {
+    return JSON.parse(localStorage.getItem(ORDER_DRAFT_KEY) || '{}');
+  } catch {
+    return {};
+  }
+}
+
+function saveOrderDraft(draft) {
+  try {
+    localStorage.setItem(ORDER_DRAFT_KEY, JSON.stringify(draft));
+  } catch {
+    // Ignore storage failures (private mode, blocked storage, etc.)
+  }
+}
+
+function clearOrderDraft() {
+  try {
+    localStorage.removeItem(ORDER_DRAFT_KEY);
+  } catch {
+    // Ignore storage failures
+  }
+}
 
 function getNextPickup() {
   const t = today();
@@ -300,6 +326,8 @@ function initOrderForm() {
       inp.addEventListener('input', updateTotal);
       inp.addEventListener('change', updateTotal);
     });
+
+    applyOrderDraftSelections();
   }
 
   updateTotal();
@@ -322,6 +350,63 @@ function updateTotal() {
       ? `Place Order & Pay $${total.toFixed(2)}`
       : 'Add items to place order';
   }
+}
+
+function applyOrderDraftSelections() {
+  const draft = getOrderDraft();
+
+  document.querySelectorAll('.qty-input').forEach(inp => {
+    const qty = parseInt(draft[inp.name], 10) || 0;
+    if (qty > 0) inp.value = Math.min(30, qty);
+  });
+}
+
+function initBakedGoodsQuickOrder() {
+  const cartBar = document.getElementById('baked-cart-bar');
+  if (!cartBar) return;
+
+  const countEl = document.getElementById('baked-cart-count');
+  const qtyInputs = [...document.querySelectorAll('.quick-qty-input[data-order-id]')];
+  if (qtyInputs.length === 0) return;
+
+  const draft = getOrderDraft();
+
+  function normalizeQty(value) {
+    const n = parseInt(value, 10);
+    if (Number.isNaN(n) || n < 0) return 0;
+    return Math.min(30, n);
+  }
+
+  function refreshCount() {
+    const totalItems = qtyInputs.reduce((sum, input) => sum + normalizeQty(input.value), 0);
+    if (countEl) countEl.textContent = String(totalItems);
+  }
+
+  qtyInputs.forEach(input => {
+    const itemId = input.dataset.orderId;
+    if (!itemId) return;
+
+    if (draft[itemId]) {
+      input.value = normalizeQty(draft[itemId]);
+    }
+
+    const syncDraft = () => {
+      const qty = normalizeQty(input.value);
+      input.value = qty;
+      if (qty === 0) {
+        delete draft[itemId];
+      } else {
+        draft[itemId] = qty;
+      }
+      saveOrderDraft(draft);
+      refreshCount();
+    };
+
+    input.addEventListener('input', syncDraft);
+    input.addEventListener('change', syncDraft);
+  });
+
+  refreshCount();
 }
 
 function handleOrderSubmit(e) {
@@ -350,6 +435,7 @@ function handleOrderSubmit(e) {
     body: new URLSearchParams(formData).toString(),
   })
     .finally(() => {
+      clearOrderDraft();
       window.location.href = SITE_CONFIG.stripePaymentLink;
     });
 }
@@ -371,6 +457,7 @@ document.addEventListener('DOMContentLoaded', () => {
   renderBanner();
   renderCallout();
   initNav();
+  initBakedGoodsQuickOrder();
   initOrderForm();
   initFAQ();
 });

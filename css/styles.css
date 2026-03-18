@@ -1051,6 +1051,31 @@ footer ul li { margin-bottom: .45rem; }
 .size-card .size-per { font-size: .8rem; color: var(--muted); }
 
 /* ===== BAKED GOODS PAGE ===== */
+.quick-cart-bar {
+  max-width: var(--max);
+  margin: 1.5rem auto 0;
+  padding: 1rem 1.25rem;
+  background: var(--white);
+  border: 1px solid #e6d9cf;
+  border-radius: var(--r);
+  box-shadow: var(--shadow);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.quick-cart-copy {
+  font-size: 1rem;
+  color: var(--muted);
+}
+
+.quick-cart-copy strong {
+  color: var(--brown);
+  font-family: var(--font-serif);
+  font-size: 1.2rem;
+}
+
 .goods-section { padding: 3.5rem 1.5rem; }
 .goods-section:nth-child(even) { background: var(--surface); }
 .goods-section-inner { max-width: var(--max); margin: 0 auto; }
@@ -1080,6 +1105,58 @@ footer ul li { margin-bottom: .45rem; }
   font-weight: 700;
   color: var(--terracotta);
   font-size: .97rem;
+}
+
+.quick-qty-row {
+  margin-top: .75rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: .75rem;
+}
+
+.quick-qty-label {
+  font-size: .82rem;
+  font-weight: 700;
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: .04em;
+}
+
+.quick-qty-input {
+  width: 78px;
+  text-align: center;
+  padding: .4rem .5rem;
+  border: 1.5px solid #d9cec6;
+  border-radius: var(--r);
+  background: var(--cream);
+  color: var(--brown);
+  font-weight: 700;
+}
+
+.quick-qty-input:focus {
+  outline: none;
+  border-color: var(--terracotta);
+}
+
+.quick-unavailable {
+  margin-top: .8rem;
+  font-size: .82rem;
+  color: var(--muted);
+  font-style: italic;
+}
+
+@media (max-width: 700px) {
+  .quick-cart-bar {
+    margin: 1rem 1rem 0;
+    flex-direction: column;
+    align-items: stretch;
+    text-align: center;
+  }
+
+  .quick-cart-bar .btn {
+    width: 100%;
+  }
 }
 
 /* ===== EVENTS PAGE ===== */
