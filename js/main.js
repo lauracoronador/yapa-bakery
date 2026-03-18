@@ -12,6 +12,7 @@
 const SITE_CONFIG = {
   // ── Upcoming Saturday pickup dates (YYYY-MM-DD) ──
   pickupDates: [
+    '2026-03-21',
     '2026-04-11',
     '2026-04-25',
     '2026-05-09',
@@ -24,6 +25,12 @@ const SITE_CONFIG = {
   pickupLocation: 'Santa Clara County (address shared after payment)',
   orderOpenDays:  10,  // days before pickup that orders open
   orderCloseDays: 5,   // days before pickup that orders close (Monday)
+
+  // Optional per-pickup status override: use when you need to keep a date open past the normal cutoff.
+  // Supported values: 'open', 'closed'
+  orderStatusOverrides: {
+    '2026-03-21': 'open',
+  },
 
   // ── Stripe Payment Link ── (replace with your link)
   stripePaymentLink: 'https://buy.stripe.com/REPLACE_WITH_YOUR_LINK',
@@ -75,6 +82,13 @@ function today() {
   return d;
 }
 
+function toDateKey(d) {
+  const y = d.getFullYear();
+  const m = String(d.getMonth() + 1).padStart(2, '0');
+  const day = String(d.getDate()).padStart(2, '0');
+  return `${y}-${m}-${day}`;
+}
+
 const MS_DAY = 86400000;
 
 function getNextPickup() {
@@ -91,6 +105,20 @@ function getOrderStatus() {
 
   const t = today();
   const daysUntil = Math.round((pickup - t) / MS_DAY);
+  const pickupKey = toDateKey(pickup);
+  const forcedStatus = SITE_CONFIG.orderStatusOverrides?.[pickupKey];
+
+  if (forcedStatus === 'open') {
+    const closeDate = new Date(pickup - SITE_CONFIG.orderCloseDays * MS_DAY);
+    return { status: 'open', pickup, daysUntil, closeDate };
+  }
+  if (forcedStatus === 'closed') {
+    const next = SITE_CONFIG.pickupDates
+      .map(parseDate)
+      .filter(d => d > pickup)
+      .sort((a, b) => a - b)[0] || null;
+    return { status: 'closed', pickup, nextPickup: next };
+  }
 
   if (daysUntil > SITE_CONFIG.orderOpenDays) {
     const opensOn = new Date(pickup - SITE_CONFIG.orderOpenDays * MS_DAY);
