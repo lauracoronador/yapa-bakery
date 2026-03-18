@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Events &amp; Bulk Orders | Yapa Bakery</title>
+  <meta name="description" content="Bulk salteñas, custom cakes, and catering for birthdays, office events, and community gatherings in Santa Clara County. Starting at 25 pieces.">
+  <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+
+  <div class="pickup-banner" id="pickup-banner">Loading pickup info…</div>
+
+  <header class="site-header">
+    <nav class="nav-inner">
+      <a href="index.html" class="logo">
+        <img src="Images/yapa_logo_option_b.svg" alt="Yapa Bakery">
+      </a>
+      <button class="hamburger" id="hamburger" aria-label="Toggle menu">
+        <span></span><span></span><span></span>
+      </button>
+      <ul class="nav-links" id="nav-links">
+        <li><a href="index.html">Home</a></li>
+        <li><a href="order.html">Order</a></li>
+        <li><a href="about.html">About</a></li>
+        <li><a href="faq.html">FAQ</a></li>
+        <li class="nav-cta"><a href="order.html">Order Now</a></li>
+      </ul>
+    </nav>
+  </header>
+
+  <main>
+
+    <div class="page-header">
+      <h1>Events &amp; Bulk Orders</h1>
+      <p>Feeding a crowd? We've got you. Starting at 25 pieces, delivered to your pickup date.</p>
+    </div>
+
+    <div class="order-wrapper" style="max-width: 900px;">
+
+      <!-- Bulk Salteñas -->
+      <section style="margin-bottom: 3rem;">
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 2.5rem; align-items: start; margin-bottom: 2rem;">
+          <img src="Images/Alfajores1.jpeg" alt="Packaged orders ready for pickup" style="border-radius: var(--r); width: 100%; aspect-ratio: 4/3; object-fit: cover; box-shadow: var(--shadow);">
+          <div>
+            <span style="display: inline-block; font-size: .72rem; font-weight: 700; text-transform: uppercase; letter-spacing: .12em; color: var(--terracotta); margin-bottom: .5rem;">Savory</span>
+            <h2 style="margin-bottom: .75rem;">Bulk Salteñas</h2>
+            <p>The more you order, the more you save. All bulk orders are baked fresh for your pickup date. Please order at least <strong>2 weeks in advance</strong>.</p>
+          </div>
+        </div>
+
+        <table class="bulk-table">
+          <thead>
+            <tr>
+              <th>Quantity</th>
+              <th>Price</th>
+              <th class="price-col">Per piece</th>
+              <th>Great for</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>25 salteñas</td>
+              <td class="price-col">$100</td>
+              <td>$4.00 each</td>
+              <td>Small office lunch, family gathering</td>
+            </tr>
+            <tr>
+              <td>30 salteñas</td>
+              <td class="price-col">$117</td>
+              <td>$3.90 each</td>
+              <td>Birthday brunch, team lunch</td>
+            </tr>
+            <tr>
+              <td>35 salteñas</td>
+              <td class="price-col">$133</td>
+              <td>$3.80 each</td>
+              <td>Medium party, company meetup</td>
+            </tr>
+            <tr>
+              <td>40 salteñas</td>
+              <td class="price-col">$152</td>
+              <td>$3.80 each</td>
+              <td>Large gathering, cultural event</td>
+            </tr>
+            <tr>
+              <td>50 salteñas</td>
+              <td class="price-col">$185</td>
+              <td>$3.70 each</td>
+              <td>Big celebration, pop-up</td>
+            </tr>
+            <tr>
+              <td>50+ salteñas</td>
+              <td class="price-col">Inquire below</td>
+              <td>Custom pricing</td>
+              <td>Festivals, corporate events</td>
+            </tr>
+          </tbody>
+        </table>
+        <p style="font-size: .85rem;">All prices are approximate — final quote provided after inquiry. Pickup at our Santa Clara County location on your chosen Saturday.</p>
+      </section>
+
+      <!-- Other Items -->
+      <section style="background: var(--surface); border-radius: var(--r); padding: 2rem; margin-bottom: 3rem;">
+        <h3 style="margin-bottom: 1rem;">We can also do…</h3>
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem;">
+          <div>
+            <strong style="display: block; margin-bottom: .3rem;">🎂 Custom Cakes</strong>
+            <p style="font-size: .9rem;">Tres leches, red velvet, marble — whole cakes for birthdays and celebrations. Please give 2+ weeks notice.</p>
+          </div>
+          <div>
+            <strong style="display: block; margin-bottom: .3rem;">🍪 Cookie Trays</strong>
+            <p style="font-size: .9rem;">Alfajores, vegan butter cookies, or a mix — beautiful for gifts, office treats, and event tables.</p>
+          </div>
+          <div>
+            <strong style="display: block; margin-bottom: .3rem;">🎉 Mixed Platters</strong>
+            <p style="font-size: .9rem;">A combination of salteñas and sweets — great when you want to offer guests variety.</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- Inquiry Form -->
+      <section>
+        <h2 style="margin-bottom: .5rem;">Submit an Inquiry</h2>
+        <p style="margin-bottom: 1.75rem;">Fill out the form below and we'll reply within 2 business days with availability and a quote.</p>
+
+        <form
+          class="inquiry-form-wrap"
+          name="event-inquiry"
+          method="POST"
+          data-netlify="true"
+          netlify-honeypot="bot-field"
+          action="/faq.html"
+        >
+          <input type="hidden" name="form-name" value="event-inquiry">
+          <p style="display:none;"><label>Don't fill this out: <input name="bot-field"></label></p>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label for="inq-name">Your Name *</label>
+              <input type="text" id="inq-name" name="name" required autocomplete="name">
+            </div>
+            <div class="form-group">
+              <label for="inq-email">Email *</label>
+              <input type="email" id="inq-email" name="email" required autocomplete="email">
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label for="inq-phone">Phone</label>
+              <input type="tel" id="inq-phone" name="phone" autocomplete="tel">
+            </div>
+            <div class="form-group">
+              <label for="inq-date">Event Date *</label>
+              <input type="date" id="inq-date" name="event-date" required>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="inq-what">What would you like? *</label>
+            <select id="inq-what" name="item-type" required>
+              <option value="">— Select one —</option>
+              <option value="saltenas-bulk">Bulk Salteñas (25+)</option>
+              <option value="custom-cake">Custom Cake</option>
+              <option value="cookie-tray">Cookie Tray</option>
+              <option value="mixed-platter">Mixed Platter (salteñas + sweets)</option>
+              <option value="other">Other / Not sure yet</option>
+            </select>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label for="inq-qty">Estimated Quantity *</label>
+              <input type="text" id="inq-qty" name="quantity" placeholder="e.g. 30 salteñas, 2 cakes" required>
+            </div>
+            <div class="form-group">
+              <label for="inq-guests">Number of guests</label>
+              <input type="text" id="inq-guests" name="guests" placeholder="e.g. 30">
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="inq-message">Tell us more</label>
+            <textarea id="inq-message" name="message" rows="4" placeholder="Event type, dietary needs, pickup date preference, anything else we should know…"></textarea>
+          </div>
+
+          <div class="submit-btn-wrap">
+            <button type="submit" class="btn btn-primary" style="width: 100%; padding: 1rem; font-size: 1.05rem;">
+              Send Inquiry →
+            </button>
+            <p style="font-size: .8rem; color: var(--muted); margin-top: .75rem; text-align: center;">We'll reply within 2 business days.</p>
+          </div>
+        </form>
+      </section>
+
+    </div>
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+      <div>
+        <img src="Images/yapa_logo_option_b.svg" alt="Yapa Bakery" class="footer-logo">
+        <p>Handmade Bolivian salteñas &amp; homemade sweets. Small batches. Made with love.</p>
+        <p class="footer-mehko">
+          <strong style="color: rgba(249,244,238,.7);">Made in a Home Kitchen</strong><br>
+          Pursuant to California's Microenterprise Home Kitchen Operations (MEHKO) law.<br>
+          Santa Clara County Permit No. <strong style="color: rgba(249,244,238,.7);">[YOUR PERMIT NUMBER]</strong>
+        </p>
+      </div>
+      <div>
+        <h4>Pages</h4>
+        <ul>
+          <li><a href="index.html">Home</a></li>
+          <li><a href="saltenas.html">Salteñas</a></li>
+          <li><a href="baked-goods.html">Baked Goods</a></li>
+          <li><a href="events.html">Events &amp; Bulk</a></li>
+          <li><a href="order.html">Order Now</a></li>
+          <li><a href="about.html">About</a></li>
+          <li><a href="faq.html">FAQ</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4>Connect</h4>
+        <ul>
+          <li><a href="https://instagram.com/YapaPatisserie" target="_blank">@YapaPatisserie</a></li>
+          <li><a href="mailto:hello@yapabakery.com">hello@yapabakery.com</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      &copy; <span id="year"></span> Yapa Bakery. All rights reserved.
+    </div>
+  </footer>
+
+  <script src="js/main.js"></script>
+  <script>document.getElementById('year').textContent = new Date().getFullYear();</script>
+</body>
+</html>
