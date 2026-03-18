@@ -117,6 +117,17 @@ function clearOrderDraft() {
   }
 }
 
+function getDraftItemCount() {
+  const draft = getOrderDraft();
+  return Object.values(draft).reduce((sum, qty) => sum + (parseInt(qty, 10) || 0), 0);
+}
+
+function renderNavCartCount() {
+  const count = getDraftItemCount();
+  const countEl = document.getElementById('nav-cart-count');
+  if (countEl) countEl.textContent = String(count);
+}
+
 function getNextPickup() {
   const t = today();
   return SITE_CONFIG.pickupDates
@@ -260,6 +271,8 @@ function initNav() {
       a.classList.add('active');
     }
   });
+
+  renderNavCartCount();
 }
 
 // ── Order Form ─────────────────────────────────────────────
@@ -380,6 +393,7 @@ function initBakedGoodsQuickOrder() {
   function refreshCount() {
     const totalItems = qtyInputs.reduce((sum, input) => sum + normalizeQty(input.value), 0);
     if (countEl) countEl.textContent = String(totalItems);
+    renderNavCartCount();
   }
 
   qtyInputs.forEach(input => {
@@ -436,6 +450,7 @@ function handleOrderSubmit(e) {
   })
     .finally(() => {
       clearOrderDraft();
+      renderNavCartCount();
       window.location.href = SITE_CONFIG.stripePaymentLink;
     });
 }

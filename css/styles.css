@@ -138,6 +138,36 @@ img { max-width: 100%; height: auto; display: block; }
 }
 .nav-links .nav-cta a:hover { background: #a8531f; }
 
+.nav-links .nav-cart a {
+  display: inline-flex;
+  align-items: center;
+  gap: .4rem;
+  background: var(--surface);
+  color: var(--brown);
+  padding: .35rem .75rem;
+  border-radius: 999px;
+  font-size: .95rem;
+  font-weight: 700;
+}
+
+.nav-links .nav-cart a:hover {
+  background: #e7ddd4;
+}
+
+#nav-cart-count {
+  min-width: 1.4rem;
+  height: 1.4rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 999px;
+  background: var(--terracotta);
+  color: var(--white);
+  font-size: .78rem;
+  line-height: 1;
+  padding: 0 .3rem;
+}
+
 /* Hamburger */
 .hamburger {
   display: none;
