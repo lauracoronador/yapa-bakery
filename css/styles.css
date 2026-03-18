@@ -535,6 +535,27 @@ img { max-width: 100%; height: auto; display: block; }
 }
 .mehko-notice strong { color: var(--brown); }
 
+.home-mehko-section {
+  padding-top: 2rem;
+  padding-bottom: 2rem;
+}
+
+.home-mehko-section .section-inner {
+  display: flex;
+  justify-content: center;
+}
+
+.home-mehko-section .mehko-notice {
+  margin-bottom: 0;
+  padding: 1.75rem 2rem;
+}
+
+.mehko-disclaimer {
+  font-size: .8rem;
+  display: block;
+  margin-top: .65rem;
+}
+
 /* ===== FAQ PAGE ===== */
 .faq-wrapper {
   max-width: 740px;
@@ -596,7 +617,15 @@ footer a { color: rgba(249,244,238,.7); font-size: .9rem; }
 footer a:hover { color: var(--cream); text-decoration: none; }
 footer ul { list-style: none; }
 footer ul li { margin-bottom: .45rem; }
-.footer-logo { height: 60px; width: auto; margin-bottom: .75rem; }
+.footer-logo {
+  height: 60px;
+  width: auto;
+  margin-bottom: .75rem;
+  padding: .35rem .45rem;
+  background: rgba(249,244,238,.12);
+  border: 1px solid rgba(249,244,238,.22);
+  border-radius: 8px;
+}
 .footer-mehko {
   border-top: 1px solid rgba(249,244,238,.12);
   padding-top: 1.25rem;
