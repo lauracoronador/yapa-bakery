@@ -158,12 +158,12 @@ function renderBanner() {
 
   if (s.status === 'open') {
     banner.innerHTML =
-      `<strong>Next Pickup: ${dateStr} &nbsp;·&nbsp; ${SITE_CONFIG.pickupWindow}</strong>
+      `<strong>Next Salteñas Pickup: ${dateStr} &nbsp;·&nbsp; ${SITE_CONFIG.pickupWindow}</strong>
        &nbsp;·&nbsp; Orders close ${fmtShort(s.closeDate)}
        &nbsp;<a href="order.html">Order Now →</a>`;
   } else if (s.status === 'not-open') {
     banner.innerHTML =
-      `<strong>Next Pickup: ${dateStr}</strong>
+      `<strong>Next Salteñas Pickup: ${dateStr}</strong>
        &nbsp;·&nbsp; Orders open ${fmtShort(s.opensOn)}`;
   } else {
     const nextMsg = s.nextPickup
