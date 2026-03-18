@@ -33,111 +33,99 @@
 
   <main>
 
-    <!-- Hero -->
+    <!-- ── Hero ── -->
     <section class="hero">
       <div class="hero-bg" style="background-image: url('Images/Saltena.jpeg');"></div>
       <div class="hero-content">
-        <div class="hero-eyebrow">Santa Clara County · Pickup Orders</div>
-        <h1>Handmade with love,<br>straight from the heart<br>of Bolivia.</h1>
-        <p>Fresh salteñas, dulce de leche alfajores, and homemade cakes — made in small batches, available for Saturday pickup twice a month.</p>
+        <div class="hero-eyebrow">Santa Clara County · Saturday Pickup</div>
+        <h1>Bolivian salteñas &amp;<br>homemade sweets.</h1>
+        <p>Made fresh in small batches, twice a month. Pre-order online — pickup Saturday.</p>
+        <div class="hero-pickup">
+          📅 Next pickup: <strong id="hero-pickup-date">Loading…</strong>
+        </div>
         <div class="hero-actions">
           <a href="order.html" class="btn btn-primary">Order for Pickup</a>
-          <a href="food.html" class="btn btn-outline" style="border-color: white; color: white;">See Our Menu</a>
         </div>
       </div>
     </section>
 
-    <!-- Story Intro -->
-    <section class="section">
-      <div class="section-inner">
-        <div class="story-grid">
-          <div class="story-text">
-            <h2>A little extra, made with everything.</h2>
-            <p>In Bolivia, <em>yapa</em> means a small gift given freely — a little something extra the vendor adds to your bag with a smile. That spirit is baked into everything we make.</p>
-            <p>From our home kitchen in Santa Clara County, we craft traditional Bolivian salteñas alongside homemade cakes, cookies, and sweets — each one made to order in small batches so nothing goes to waste and everything arrives fresh.</p>
-            <a href="about.html" class="btn btn-outline">Our Story</a>
-          </div>
-          <div class="story-img">
-            <img src="Images/Alfajores-Valentines.jpeg" alt="Heart-shaped alfajores — a little yapa of love">
-          </div>
+    <!-- ── Savory ── -->
+    <section class="home-cat">
+      <div class="home-cat-inner">
+        <div class="home-cat-img">
+          <img src="Images/Saltenas.jpeg" alt="Fresh Bolivian salteñas from the oven">
         </div>
-
-        <!-- Next Pickup Callout -->
-        <div class="pickup-callout">
-          <div>
-            <h3>Next Pickup</h3>
-            <p id="callout-date" style="font-size: 1.1rem; color: var(--terracotta); font-family: Georgia, serif; font-weight: bold;">Loading…</p>
-            <p id="callout-msg">Saturday pickup · 11am – 1pm · Santa Clara County</p>
-          </div>
-          <a href="order.html" class="btn btn-primary">Order Now</a>
+        <div class="home-cat-text">
+          <span class="home-cat-label">Savory</span>
+          <h2>Salteñas</h2>
+          <p>Bolivia's most beloved pastry — a slow-braised filling of seasoned beef or chicken, potato, and olives, tucked inside a golden hand-crimped shell. Baked, never fried.</p>
+          <ul class="item-list">
+            <li><span class="item-label">Salteña (each)</span><span class="price">$4.50</span></li>
+            <li><span class="item-label">Salteñas × 6</span><span class="price">$25</span></li>
+            <li><span class="item-label">Salteñas × 12</span><span class="price">$48</span></li>
+          </ul>
+          <a href="order.html" class="btn btn-primary">Order Salteñas →</a>
         </div>
       </div>
     </section>
 
-    <!-- Food Highlights -->
-    <section class="section section-alt">
-      <div class="section-inner">
-        <div class="section-header">
-          <h2>Fresh from the oven</h2>
-          <p>A rotating selection of salteñas, sweets, and cakes — made in small batches for every pickup.</p>
-          <div class="divider"></div>
+    <!-- ── Sweet ── -->
+    <section class="home-cat home-cat-alt">
+      <div class="home-cat-inner">
+        <div class="home-cat-text">
+          <span class="home-cat-label">Sweet</span>
+          <h2>Sweets &amp; Cakes</h2>
+          <p>Dulce de leche alfajores, vegan butter cookies, tres leches cake, tartufo, and more — rotating each pickup based on what's in season and what we're loving.</p>
+          <ul class="item-list">
+            <li><span class="item-label">Alfajores (each)</span><span class="price">$3.50</span></li>
+            <li><span class="item-label">Alfajores × 6</span><span class="price">$19</span></li>
+            <li><span class="item-label">Vegan Butter Cookies (box/6)</span><span class="price">$18</span></li>
+            <li><span class="item-label">Tres Leches Cake (whole)</span><span class="price">$55</span></li>
+            <li><span class="item-label">Tartufo (each)</span><span class="price">$9</span></li>
+          </ul>
+          <a href="order.html" class="btn btn-primary">Order Sweets →</a>
         </div>
-        <div class="food-grid">
-          <div class="food-card">
-            <img src="Images/Saltena.jpeg" alt="Bolivian Salteña — savory baked pastry">
-            <div class="food-card-body">
-              <h3>Salteñas</h3>
-              <p>Bolivia's beloved savory pastry — a juicy, slow-braised filling tucked inside a perfectly crimped shell.</p>
-            </div>
-          </div>
-          <div class="food-card">
-            <img src="Images/Tartufo.jpeg" alt="Tartufo — Italian-style ice cream truffle">
-            <div class="food-card-body">
-              <h3>Tartufo</h3>
-              <p>Italian-inspired ice cream truffles — a decadent bite-sized dessert that's always a crowd favorite.</p>
-            </div>
-          </div>
-          <div class="food-card">
-            <img src="Images/Alfajores.jpeg" alt="Alfajores — dulce de leche sandwich cookies">
-            <div class="food-card-body">
-              <h3>Alfajores</h3>
-              <p>Melt-in-your-mouth shortbread sandwiched with silky dulce de leche — a classic South American treat.</p>
-            </div>
-          </div>
-        </div>
-        <div class="text-center mt-2">
-          <a href="food.html" class="btn btn-outline">View Full Menu</a>
+        <div class="home-cat-photos">
+          <img src="Images/Alfajores.jpeg" alt="Alfajores">
+          <img src="Images/TresLeches.jpeg" alt="Tres Leches Cake">
+          <img src="Images/Tartufo.jpeg" alt="Tartufo">
+          <img src="Images/VeganButterCookies.jpeg" alt="Vegan Butter Cookies">
         </div>
       </div>
     </section>
 
-    <!-- How It Works -->
-    <section class="section">
-      <div class="section-inner">
-        <div class="section-header">
-          <h2>How pickup orders work</h2>
-          <div class="divider"></div>
+    <!-- ── Events & Bulk ── -->
+    <section class="events-section">
+      <h2>Events &amp; Bulk Orders</h2>
+      <p>Feeding a crowd? Celebrating something special? We do salteñas by the dozen, custom cakes, and full catering for parties, offices, and community events.</p>
+      <div class="events-grid">
+        <div class="events-card">
+          <div class="ec-icon">🎂</div>
+          <h4>Birthdays &amp; Parties</h4>
+          <p>Custom cakes, cookie boxes, and salteñas trays for your celebration — any size.</p>
         </div>
-        <div class="food-grid" style="grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));">
-          <div style="text-align: center; padding: 1.5rem 1rem;">
-            <div style="font-size: 2.5rem; margin-bottom: .75rem;">📅</div>
-            <h3 style="margin-bottom: .5rem;">1. Check the date</h3>
-            <p>Pickup happens twice a month on Saturdays, 11am–1pm. Orders open 10 days before each pickup.</p>
-          </div>
-          <div style="text-align: center; padding: 1.5rem 1rem;">
-            <div style="font-size: 2.5rem; margin-bottom: .75rem;">🛒</div>
-            <h3 style="margin-bottom: .5rem;">2. Place your order</h3>
-            <p>Choose your items and pay securely online. Orders close Monday (5 days before) — no exceptions.</p>
-          </div>
-          <div style="text-align: center; padding: 1.5rem 1rem;">
-            <div style="font-size: 2.5rem; margin-bottom: .75rem;">🎁</div>
-            <h3 style="margin-bottom: .5rem;">3. Pickup Saturday</h3>
-            <p>Everything is made fresh for your order. Swing by on Saturday and take home something delicious.</p>
-          </div>
+        <div class="events-card">
+          <div class="ec-icon">🏢</div>
+          <h4>Office &amp; Corporate</h4>
+          <p>Salteñas and sweets for your team lunch, meeting, or client event. Minimum 2 weeks notice.</p>
         </div>
-        <div class="text-center mt-2">
-          <a href="faq.html" class="btn btn-outline">Read the FAQ</a>
+        <div class="events-card">
+          <div class="ec-icon">🎉</div>
+          <h4>Community Events</h4>
+          <p>Pop-ups, fundraisers, cultural festivals — we'd love to bring Bolivian flavors to your event.</p>
         </div>
+      </div>
+      <a href="order.html#bulk" class="btn btn-primary">Submit an Inquiry →</a>
+    </section>
+
+    <!-- ── About strip ── -->
+    <section class="about-strip">
+      <div class="about-strip-inner">
+        <div>
+          <h3>Home kitchen, Bolivian heart.</h3>
+          <p>Everything is made in our licensed home kitchen in Santa Clara County — in small batches, made to order, with zero waste. <em>Yapa</em> means a little extra given freely. That's the spirit in everything we bake.</p>
+        </div>
+        <a href="about.html" class="btn btn-outline">Our Story →</a>
       </div>
     </section>
 

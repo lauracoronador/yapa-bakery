@@ -146,13 +146,21 @@ function renderBanner() {
   }
 }
 
-// ── Homepage callout ───────────────────────────────────────
+// ── Homepage callout + hero date ───────────────────────────
 function renderCallout() {
-  const dateEl = document.getElementById('callout-date');
-  const msgEl  = document.getElementById('callout-msg');
-  if (!dateEl) return;
+  const dateEl     = document.getElementById('callout-date');
+  const msgEl      = document.getElementById('callout-msg');
+  const heroDateEl = document.getElementById('hero-pickup-date');
 
   const s = getOrderStatus();
+
+  // Hero pill
+  if (heroDateEl) {
+    heroDateEl.textContent = s.pickup ? fmt(s.pickup) : 'Coming soon';
+  }
+
+  if (!dateEl) return;
+
   if (s.status === 'none') {
     dateEl.textContent = 'Coming Soon';
     if (msgEl) msgEl.textContent = 'Follow us on Instagram for the next pickup announcement.';
