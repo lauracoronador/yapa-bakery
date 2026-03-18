@@ -117,6 +117,20 @@ function clearOrderDraft() {
   }
 }
 
+function getAllMenuItems() {
+  return SITE_CONFIG.menu.flatMap(cat => cat.items);
+}
+
+function getItemById(itemId) {
+  return getAllMenuItems().find(item => item.id === itemId) || null;
+}
+
+function getBakedGoodsItems() {
+  return SITE_CONFIG.menu
+    .filter(cat => cat.category !== 'Salteñas')
+    .flatMap(cat => cat.items);
+}
+
 function getDraftItemCount() {
   const draft = getOrderDraft();
   return Object.values(draft).reduce((sum, qty) => sum + (parseInt(qty, 10) || 0), 0);
@@ -253,7 +267,7 @@ function initNav() {
   const legacyCta = document.querySelector('.nav-links .nav-cta');
   if (legacyCta) {
     legacyCta.className = 'nav-cart';
-    legacyCta.innerHTML = '<a href="order.html" aria-label="View cart">🛒 <span id="nav-cart-count">0</span></a>';
+    legacyCta.innerHTML = '<a href="cart.html" aria-label="View cart">🛒 <span id="nav-cart-count">0</span></a>';
   }
 
   if (hamburger && navLinks) {
@@ -430,6 +444,139 @@ function initBakedGoodsQuickOrder() {
   refreshCount();
 }
 
+function initCartPage() {
+  const form = document.getElementById('cart-form');
+  if (!form) return;
+
+  const cartOpen = document.getElementById('cart-open');
+  const cartClosed = document.getElementById('cart-closed');
+  const cartEmpty = document.getElementById('cart-empty');
+  const cartItemsEl = document.getElementById('cart-items');
+  const missingSelect = document.getElementById('missing-item-select');
+  const missingQty = document.getElementById('missing-item-qty');
+  const addMissingBtn = document.getElementById('add-missing-item');
+
+  const s = getOrderStatus();
+  if (s.status !== 'open') {
+    if (cartOpen) cartOpen.classList.add('hidden');
+    if (cartClosed) cartClosed.classList.remove('hidden');
+
+    const msgEl = document.getElementById('closed-msg');
+    if (msgEl) {
+      if (s.status === 'not-open') {
+        msgEl.textContent = `Orders for the ${fmt(s.pickup)} pickup open on ${fmt(s.opensOn)}.`;
+      } else if (s.status === 'closed') {
+        const nextMsg = s.nextPickup ? ` Next pickup: ${fmt(s.nextPickup)}.` : '';
+        msgEl.textContent = `Orders are closed for the ${fmt(s.pickup)} pickup.${nextMsg}`;
+      } else {
+        msgEl.textContent = 'No upcoming pickups scheduled. Follow us on Instagram for updates.';
+      }
+    }
+    return;
+  }
+
+  const pdEl = document.getElementById('pickup-date-display');
+  if (pdEl) pdEl.textContent = `${fmt(s.pickup)}, ${SITE_CONFIG.pickupWindow}`;
+  const cdEl = document.getElementById('close-date-display');
+  if (cdEl) cdEl.textContent = fmt(s.closeDate);
+
+  const bakedGoodsItems = getBakedGoodsItems();
+  if (missingSelect) {
+    missingSelect.innerHTML = '<option value="">Select a baked good to add</option>' + bakedGoodsItems
+      .map(item => `<option value="${item.id}">${item.name} — $${item.price.toFixed(2)}</option>`)
+      .join('');
+  }
+
+  function renderCartItems() {
+    const draft = getOrderDraft();
+    const entries = Object.entries(draft)
+      .map(([itemId, qty]) => ({ itemId, qty: parseInt(qty, 10) || 0 }))
+      .filter(entry => entry.qty > 0)
+      .map(entry => ({ ...entry, item: getItemById(entry.itemId) }))
+      .filter(entry => !!entry.item);
+
+    if (entries.length === 0) {
+      if (cartItemsEl) cartItemsEl.innerHTML = '<p style="color: var(--muted);">No items selected yet.</p>';
+      if (cartEmpty) cartEmpty.classList.remove('hidden');
+      if (cartOpen) cartOpen.classList.add('hidden');
+      updateTotal();
+      renderNavCartCount();
+      return;
+    }
+
+    if (cartEmpty) cartEmpty.classList.add('hidden');
+    if (cartOpen) cartOpen.classList.remove('hidden');
+
+    if (cartItemsEl) {
+      cartItemsEl.innerHTML = entries.map(({ item, qty }) => `
+        <div class="item-row">
+          <div class="item-info">
+            <div class="item-name">${item.name}</div>
+            <div class="item-desc">${item.desc}</div>
+          </div>
+          <div class="item-price-tag">$${item.price.toFixed(2)}</div>
+          <div class="qty-wrap">
+            <input
+              type="number"
+              class="qty-input form-group"
+              name="${item.id}"
+              id="qty-${item.id}"
+              value="${qty}" min="0" max="30"
+              data-price="${item.price}"
+              data-name="${item.name}"
+              aria-label="Quantity for ${item.name}"
+            >
+          </div>
+        </div>
+      `).join('');
+
+      cartItemsEl.querySelectorAll('.qty-input').forEach(input => {
+        const sync = () => {
+          const nextDraft = getOrderDraft();
+          const nextQty = Math.max(0, Math.min(30, parseInt(input.value, 10) || 0));
+          input.value = String(nextQty);
+          if (nextQty === 0) {
+            delete nextDraft[input.name];
+          } else {
+            nextDraft[input.name] = nextQty;
+          }
+          saveOrderDraft(nextDraft);
+          renderNavCartCount();
+          updateTotal();
+
+          if (nextQty === 0) {
+            renderCartItems();
+          }
+        };
+
+        input.addEventListener('input', sync);
+        input.addEventListener('change', sync);
+      });
+    }
+
+    updateTotal();
+    renderNavCartCount();
+  }
+
+  if (addMissingBtn && missingSelect && missingQty) {
+    addMissingBtn.addEventListener('click', () => {
+      const itemId = missingSelect.value;
+      const qtyToAdd = Math.max(1, Math.min(30, parseInt(missingQty.value, 10) || 1));
+      if (!itemId) return;
+
+      const draft = getOrderDraft();
+      const current = parseInt(draft[itemId], 10) || 0;
+      draft[itemId] = Math.min(30, current + qtyToAdd);
+      saveOrderDraft(draft);
+      missingQty.value = '1';
+      renderCartItems();
+    });
+  }
+
+  renderCartItems();
+  form.addEventListener('submit', handleOrderSubmit);
+}
+
 function handleOrderSubmit(e) {
   e.preventDefault();
 
@@ -480,6 +627,7 @@ document.addEventListener('DOMContentLoaded', () => {
   renderCallout();
   initNav();
   initBakedGoodsQuickOrder();
+  initCartPage();
   initOrderForm();
   initFAQ();
 });
