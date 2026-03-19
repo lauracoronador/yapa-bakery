@@ -1060,10 +1060,8 @@ footer ul li { margin-bottom: .45rem; }
 
 /* ===== SALTEÑAS PAGE ===== */
 .saltenas-hero .hero-bg {
-  background-size: contain;
-  background-repeat: no-repeat;
-  background-position: center bottom;
-  background-color: #2a170e;
+  background-size: cover;
+  background-position: center;
 }
 
 .saltenas-order-section {
