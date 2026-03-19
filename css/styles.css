@@ -1066,20 +1066,17 @@ footer ul li { margin-bottom: .45rem; }
   background-color: #2a170e;
 }
 
+.saltenas-order-section {
+  padding-top: 2.6rem;
+  padding-bottom: 2.6rem;
+}
+
 .saltenas-quick-order {
-  background: var(--surface);
+  background: var(--white);
   border-radius: var(--r);
   padding: 1.4rem 1.5rem;
-  margin-bottom: 2rem;
-}
-
-.saltenas-quick-order h2 {
-  margin-bottom: .4rem;
-}
-
-.saltenas-quick-order > p {
-  margin-bottom: 1rem;
-  font-size: .92rem;
+  border: 1px solid #e6d9cf;
+  box-shadow: var(--shadow);
 }
 
 .saltenas-quick-grid {
@@ -1108,6 +1105,12 @@ footer ul li { margin-bottom: .45rem; }
   font-weight: 700;
   margin-bottom: .55rem;
   font-size: .95rem;
+}
+
+.saltenas-quick-order .btn {
+  display: block;
+  width: fit-content;
+  margin: 0 auto;
 }
 
 .how-to-eat {
