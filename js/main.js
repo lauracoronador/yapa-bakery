@@ -10,21 +10,26 @@
    ============================================================ */
 
 const SITE_CONFIG = {
-  // ── Upcoming Saturday pickup dates (YYYY-MM-DD) ──
+  // ── Upcoming Saturday pickup dates (biweekly from March 21, 2026) ──
   pickupDates: [
     '2026-03-21',
-    '2026-04-11',
-    '2026-04-25',
-    '2026-05-09',
-    '2026-05-23',
+    '2026-04-04',
+    '2026-04-18',
+    '2026-05-02',
+    '2026-05-16',
+    '2026-05-30',
     '2026-06-13',
     '2026-06-27',
+    '2026-07-11',
+    '2026-07-25',
+    '2026-08-08',
+    '2026-08-22',
   ],
 
   pickupWindow:   '11am – 1pm',
   pickupLocation: 'Santa Clara County (address shared after payment)',
-  orderOpenDays:  10,  // days before pickup that orders open
-  orderCloseDays: 5,   // days before pickup that orders close (Monday)
+  orderOpenDays:  10,  // days before pickup that orders open (not used for new flow)
+  orderCloseDays: 5,   // days before pickup that orders close (not used for new flow)
 
   // Optional per-pickup status override: use when you need to keep a date open past the normal cutoff.
   // Supported values: 'open', 'closed'
@@ -131,9 +136,151 @@ function getBakedGoodsItems() {
     .flatMap(cat => cat.items);
 }
 
+function getSaltenasItems() {
+  return SITE_CONFIG.menu
+    .filter(cat => cat.category === 'Salteñas')
+    .flatMap(cat => cat.items);
+}
+
 function getDraftItemCount() {
   const draft = getOrderDraft();
   return Object.values(draft).reduce((sum, qty) => sum + (parseInt(qty, 10) || 0), 0);
+}
+
+// ── Cart Type Detection ────────────────────────────────────
+function getCartType() {
+  const draft = getOrderDraft();
+  const saltenasIds = getSaltenasItems().map(item => item.id);
+  const bakedGoodsIds = getBakedGoodsItems().map(item => item.id);
+
+  let hasSaltenas = false;
+  let hasBakedGoods = false;
+
+  Object.keys(draft).forEach(itemId => {
+    const qty = parseInt(draft[itemId], 10) || 0;
+    if (qty > 0) {
+      if (saltenasIds.includes(itemId)) hasSaltenas = true;
+      if (bakedGoodsIds.includes(itemId)) hasBakedGoods = true;
+    }
+  });
+
+  if (hasSaltenas && hasBakedGoods) return 'mixed';
+  if (hasSaltenas) return 'saltenas';
+  if (hasBakedGoods) return 'baked-goods';
+  return 'empty';
+}
+
+// ── Salteñas Pickup Date Logic ─────────────────────────────
+// Returns next eligible Salteña Saturday with Monday 11:59 PM cutoff (America/Los_Angeles)
+function getNextSaltenasPickupDate() {
+  const now = new Date();
+  const formatter = new Intl.DateTimeFormat('en-US', {
+    timeZone: 'America/Los_Angeles',
+    year: 'numeric',
+    month: '2-digit',
+    day: '2-digit',
+    hour: '2-digit',
+    minute: '2-digit',
+    second: '2-digit',
+    hour12: false,
+  });
+
+  const parts = formatter.formatToParts(now);
+  const ptMap = {};
+  parts.forEach(({ type, value }) => {
+    ptMap[type] = value;
+  });
+  const currentYear = parseInt(ptMap.year, 10);
+  const currentMonth = parseInt(ptMap.month, 10) - 1;
+  const currentDay = parseInt(ptMap.day, 10);
+  const currentHour = parseInt(ptMap.hour, 10);
+  const currentMinute = parseInt(ptMap.minute, 10);
+  const currentSecond = parseInt(ptMap.second, 10);
+
+  // Create a PT "today"
+  const todayPT = new Date(currentYear, currentMonth, currentDay);
+
+  // Find all eligible Saturdays
+  const upcomingSaturdays = SITE_CONFIG.pickupDates
+    .map(parseDate)
+    .filter(d => d >= todayPT)
+    .sort((a, b) => a - b);
+
+  // For each Saturday, check if its Monday cutoff has passed
+  for (const saturday of upcomingSaturdays) {
+    const mondayBefore = new Date(saturday);
+    mondayBefore.setDate(mondayBefore.getDate() - 5); // Saturday - 5 = Monday
+
+    // Create PT "Monday 11:59:59 PM"
+    const mondayDeadline = new Date(
+      mondayBefore.getFullYear(),
+      mondayBefore.getMonth(),
+      mondayBefore.getDate(),
+      23, 59, 59, 999
+    );
+
+    // Convert current PT time to Date for comparison
+    const nowPT = new Date(currentYear, currentMonth, currentDay, currentHour, currentMinute, currentSecond);
+
+    // If we're before or at the Monday deadline, this Saturday is eligible
+    if (nowPT <= mondayDeadline) {
+      return saturday;
+    }
+  }
+
+  // Fallback to first available (shouldn't reach here)
+  return upcomingSaturdays[0] || null;
+}
+
+// ── Baked Goods Allowed Dates ──────────────────────────────
+// Returns array of allowed pickup dates for Baked Goods:
+// - Tuesday to Saturday
+// - Minimum 5 full days lead time (order placed at least 5*24 hours before pickup)
+function getAvailableBakedGoodsDates() {
+  const now = new Date();
+  const formatter = new Intl.DateTimeFormat('en-US', {
+    timeZone: 'America/Los_Angeles',
+    year: 'numeric',
+    month: '2-digit',
+    day: '2-digit',
+    hour: '2-digit',
+    minute: '2-digit',
+    second: '2-digit',
+    hour12: false,
+  });
+
+  const parts = formatter.formatToParts(now);
+  const ptMap = {};
+  parts.forEach(({ type, value }) => {
+    ptMap[type] = value;
+  });
+  const currentYear = parseInt(ptMap.year, 10);
+  const currentMonth = parseInt(ptMap.month, 10) - 1;
+  const currentDay = parseInt(ptMap.day, 10);
+
+  const todayPT = new Date(currentYear, currentMonth, currentDay);
+
+  // Generate available dates: Tue-Sat for next 3 months (approximately 13 weeks)
+  const availableDates = [];
+  for (let i = 1; i <= 91; i++) {
+    const d = new Date(todayPT);
+    d.setDate(d.getDate() + i);
+
+    const dayOfWeek = d.getDay(); // 0=Sun, 1=Mon, 2=Tue, ..., 6=Sat
+    
+    // Only Tue (2) through Sat (6)
+    if (dayOfWeek < 2 || dayOfWeek > 6) continue;
+
+    // Check 5-day lead time: order placed + 5 days <= pickup date
+    const minPickupDate = new Date(todayPT);
+    minPickupDate.setDate(minPickupDate.getDate() + 5);
+
+    if (d >= minPickupDate) {
+      availableDates.push(d);
+    }
+  }
+
+  return availableDates;
 }
 
 function renderNavCartCount() {
@@ -211,7 +358,7 @@ function renderBanner() {
     banner.innerHTML =
       `<strong>Next Salteñas Pickup: ${dateStr} &nbsp;·&nbsp; ${SITE_CONFIG.pickupWindow}</strong>
        &nbsp;·&nbsp; Orders close ${fmtShort(s.closeDate)}
-       &nbsp;<a href="order.html">Order Now →</a>`;
+       &nbsp;<a href="saltenas.html">Order Now →</a>`;
   } else if (s.status === 'not-open') {
     banner.innerHTML =
       `<strong>Next Salteñas Pickup: ${dateStr}</strong>
@@ -530,6 +677,57 @@ function initCartPage() {
       .join('');
   }
 
+  function renderPickupDateSection() {
+    const cartType = getCartType();
+    const pickupDateSection = document.getElementById('pickup-date-section');
+    const saltenaNotice = document.getElementById('saltenas-pickup-notice');
+    const bakedGoodsPicker = document.getElementById('baked-goods-date-picker');
+
+    if (!pickupDateSection) return;
+
+    if (cartType === 'empty') {
+      pickupDateSection.style.display = 'none';
+      return;
+    }
+
+    pickupDateSection.style.display = 'block';
+
+    if (cartType === 'baked-goods') {
+      // Show date picker for Baked Goods
+      if (saltenaNotice) saltenaNotice.style.display = 'none';
+      if (bakedGoodsPicker) bakedGoodsPicker.style.display = 'block';
+
+      // Populate date picker
+      const dateSelect = document.getElementById('pickup-date');
+      if (dateSelect) {
+        const availableDates = getAvailableBakedGoodsDates();
+        dateSelect.innerHTML = '<option value="">— Select a pickup date —</option>' + availableDates
+          .map(d => {
+            const dateKey = toDateKey(d);
+            const dateStr = fmt(d);
+            return `<option value="${dateKey}">${dateStr}</option>`;
+          })
+          .join('');
+      }
+    } else {
+      // Show Salteñas notice for Salteñas or Mixed cart
+      if (bakedGoodsPicker) bakedGoodsPicker.style.display = 'none';
+      if (saltenaNotice) saltenaNotice.style.display = 'block';
+
+      const nextSaltenaDate = getNextSaltenasPickupDate();
+      const saltenaDateDisplay = document.getElementById('saltenas-next-date');
+      if (saltenaDateDisplay && nextSaltenaDate) {
+        const dateKey = toDateKey(nextSaltenaDate);
+        saltenaDateDisplay.textContent = `Next available Saturday: ${fmt(nextSaltenaDate)}`;
+        
+        const hiddenInput = document.getElementById('pickup-date');
+        if (hiddenInput) {
+          hiddenInput.value = dateKey;
+        }
+      }
+    }
+  }
+
   function renderCartItems() {
     const draft = getOrderDraft();
     const entries = Object.entries(draft)
@@ -586,6 +784,7 @@ function initCartPage() {
           saveOrderDraft(nextDraft);
           renderNavCartCount();
           updateTotal();
+          renderPickupDateSection();
 
           if (nextQty === 0) {
             renderCartItems();
@@ -597,6 +796,7 @@ function initCartPage() {
       });
     }
 
+    renderPickupDateSection();
     updateTotal();
     renderNavCartCount();
   }
@@ -623,6 +823,15 @@ function initCartPage() {
 function handleOrderSubmit(e) {
   e.preventDefault();
 
+  // Validate pickup date for Baked Goods orders
+  const cartType = getCartType();
+  const pickupDateInput = document.getElementById('pickup-date');
+  
+  if (cartType === 'baked-goods' && (!pickupDateInput || !pickupDateInput.value)) {
+    alert('Please select a pickup date for your order.');
+    return;
+  }
+
   // Build order summary
   const lines = [];
   document.querySelectorAll('.qty-input').forEach(inp => {
@@ -631,11 +840,17 @@ function handleOrderSubmit(e) {
   });
   if (lines.length === 0) return;
 
+  // Add pickup date to summary
+  let summary = lines.join(', ') + ` | Total: ${document.getElementById('order-total-amount')?.textContent || ''}`;
+  if (pickupDateInput && pickupDateInput.value) {
+    const d = parseDate(pickupDateInput.value);
+    summary += ` | Pickup: ${fmt(d)}`;
+  }
+
   // Write summary into hidden field so Netlify Forms captures it
   const summaryField = document.getElementById('order-details');
   if (summaryField) {
-    const total = document.getElementById('order-total-amount')?.textContent || '';
-    summaryField.value = lines.join(', ') + ` | Total: ${total}`;
+    summaryField.value = summary;
   }
 
   // Submit to Netlify, then redirect to Stripe
