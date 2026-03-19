@@ -81,6 +81,32 @@
             <span class="amount" id="order-total-amount">$0.00</span>
           </div>
 
+          <!-- Pickup Date Selection (shown based on cart type) -->
+          <div id="pickup-date-section" style="display: none; margin: 1.5rem 0;">
+            <!-- Salteñas or Mixed Cart: show forced Saturday -->
+            <div id="saltenas-pickup-notice" style="display: none;">
+              <h3 style="margin-bottom: 0.5rem; font-size: 1.1rem; color: var(--brown);">Pickup Date</h3>
+              <div style="background: #f9f6f2; padding: 1rem; border-radius: 0.5rem; margin-bottom: 1rem;">
+                <p style="margin: 0; font-size: 0.95rem;">
+                  <strong>Your cart includes Salteñas, which are available for Saturday pickup only. <span id="saltenas-next-date" style="color: var(--terracotta);">Next available Saturday: Loading…</span></strong>
+                </p>
+                <p style="margin: 0.5rem 0 0; font-size: 0.85rem; color: var(--muted);">
+                  Need Baked Goods earlier? <a href="baked-goods.html" style="color: var(--terracotta); text-decoration: underline;">Place a separate order for Baked Goods.</a>
+                </p>
+              </div>
+              <input type="hidden" id="pickup-date" name="pickup-date" value="">
+            </div>
+
+            <!-- Baked Goods Only: show date picker -->
+            <div id="baked-goods-date-picker" style="display: none;">
+              <h3 style="margin-bottom: 0.5rem; font-size: 1.1rem; color: var(--brown);">Pickup Date *</h3>
+              <p style="font-size: 0.85rem; margin-bottom: 0.75rem; color: var(--muted);">Available Tuesday–Saturday, minimum 5 days from today.</p>
+              <select id="pickup-date" name="pickup-date" required style="width: 100%; padding: 0.75rem; border: 1px solid #ccc; border-radius: 0.25rem;">
+                <option value="">— Select a pickup date —</option>
+              </select>
+            </div>
+          </div>
+
           <h3 style="margin-bottom: 1rem; font-size: 1.1rem; color: var(--brown);">Your Information</h3>
           <div class="form-row">
             <div class="form-group">
