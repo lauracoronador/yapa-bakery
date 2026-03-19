@@ -1061,7 +1061,7 @@ footer ul li { margin-bottom: .45rem; }
 /* ===== SALTEÑAS PAGE ===== */
 .saltenas-hero .hero-bg {
   background-size: cover !important;
-  background-position: center center;
+  background-position: center 34%;
   background-repeat: no-repeat;
 }
 
