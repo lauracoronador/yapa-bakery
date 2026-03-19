@@ -82,6 +82,8 @@
 
           <!-- Pickup Date Selection (shown based on cart type) -->
           <div id="pickup-date-section" style="display: none; margin: 1.5rem 0;">
+            <input type="hidden" id="pickup-date" name="pickup-date" value="">
+
             <!-- Salteñas or Mixed Cart: show forced Saturday -->
             <div id="saltenas-pickup-notice" style="display: none;">
               <h3 style="margin-bottom: 0.5rem; font-size: 1.1rem; color: var(--brown);">Pickup Date</h3>
@@ -93,16 +95,13 @@
                   Need Baked Goods earlier? <a href="baked-goods.html" style="color: var(--terracotta); text-decoration: underline;">Place a separate order for Baked Goods.</a>
                 </p>
               </div>
-              <input type="hidden" id="pickup-date-hidden" name="pickup-date" value="">
             </div>
 
             <!-- Baked Goods Only: show date picker -->
             <div id="baked-goods-date-picker" style="display: none;">
               <h3 style="margin-bottom: 0.5rem; font-size: 1.1rem; color: var(--brown);">Pickup Date *</h3>
               <p style="font-size: 0.85rem; margin-bottom: 0.75rem; color: var(--muted);">Available Tuesday–Saturday, minimum 5 days from today.</p>
-              <select id="pickup-date-select" name="pickup-date" required style="width: 100%; padding: 0.75rem; border: 1px solid #ccc; border-radius: 0.25rem;">
-                <option value="">— Select a pickup date —</option>
-              </select>
+              <input type="date" id="pickup-date-select" style="width: 100%; padding: 0.75rem; border: 1px solid #ccc; border-radius: 0.25rem;">
             </div>
           </div>
 
@@ -170,7 +169,10 @@
         <div style="font-size: 2.5rem; margin-bottom: 1rem;">🛒</div>
         <h3>Your cart is empty</h3>
         <p>Add items from the Baked Goods or Salteñas pages to get started.</p>
-        <a href="baked-goods.html" class="btn btn-primary">Browse Baked Goods</a>
+        <div style="display: flex; gap: 0.75rem; justify-content: center; flex-wrap: wrap;">
+          <a href="baked-goods.html" class="btn btn-primary">Browse Baked Goods</a>
+          <a href="saltenas.html" class="btn btn-outline">Browse Salteñas</a>
+        </div>
       </div>
 
     </div>

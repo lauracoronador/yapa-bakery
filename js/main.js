@@ -283,6 +283,45 @@ function getAvailableBakedGoodsDates() {
   return availableDates;
 }
 
+function getTodayPT() {
+  const now = new Date();
+  const formatter = new Intl.DateTimeFormat('en-US', {
+    timeZone: 'America/Los_Angeles',
+    year: 'numeric',
+    month: '2-digit',
+    day: '2-digit',
+    hour12: false,
+  });
+
+  const parts = formatter.formatToParts(now);
+  const ptMap = {};
+  parts.forEach(({ type, value }) => {
+    ptMap[type] = value;
+  });
+
+  const year = parseInt(ptMap.year, 10);
+  const month = parseInt(ptMap.month, 10) - 1;
+  const day = parseInt(ptMap.day, 10);
+  return new Date(year, month, day);
+}
+
+function getBakedGoodsMinPickupDateKey() {
+  const minDate = new Date(getTodayPT());
+  minDate.setDate(minDate.getDate() + 5);
+  return toDateKey(minDate);
+}
+
+function isAllowedBakedGoodsPickupDate(dateKey) {
+  if (!dateKey) return false;
+
+  const selected = parseDate(dateKey);
+  const minDate = parseDate(getBakedGoodsMinPickupDateKey());
+  const dayOfWeek = selected.getDay();
+
+  const isAllowedWeekday = dayOfWeek >= 2 && dayOfWeek <= 6; // Tue-Sat
+  return isAllowedWeekday && selected >= minDate;
+}
+
 function renderNavCartCount() {
   const count = getDraftItemCount();
   const countEl = document.getElementById('nav-cart-count');
@@ -682,11 +721,14 @@ function initCartPage() {
     const pickupDateSection = document.getElementById('pickup-date-section');
     const saltenaNotice = document.getElementById('saltenas-pickup-notice');
     const bakedGoodsPicker = document.getElementById('baked-goods-date-picker');
+    const dateInput = document.getElementById('pickup-date-select');
+    const pickupDateField = document.getElementById('pickup-date');
 
     if (!pickupDateSection) return;
 
     if (cartType === 'empty') {
       pickupDateSection.style.display = 'none';
+      if (pickupDateField) pickupDateField.value = '';
       return;
     }
 
@@ -696,33 +738,52 @@ function initCartPage() {
       // Show date picker for Baked Goods
       if (saltenaNotice) saltenaNotice.style.display = 'none';
       if (bakedGoodsPicker) bakedGoodsPicker.style.display = 'block';
+      if (pickupDateField) pickupDateField.value = '';
 
-      // Populate date picker
-      const dateSelect = document.getElementById('pickup-date');
-      if (dateSelect) {
-        const availableDates = getAvailableBakedGoodsDates();
-        dateSelect.innerHTML = '<option value="">— Select a pickup date —</option>' + availableDates
-          .map(d => {
-            const dateKey = toDateKey(d);
-            const dateStr = fmt(d);
-            return `<option value="${dateKey}">${dateStr}</option>`;
-          })
-          .join('');
+      if (dateInput) {
+        dateInput.min = getBakedGoodsMinPickupDateKey();
+
+        if (!dateInput.dataset.bound) {
+          const syncPickupDate = () => {
+            if (!pickupDateField) return;
+
+            if (!dateInput.value) {
+              pickupDateField.value = '';
+              return;
+            }
+
+            if (!isAllowedBakedGoodsPickupDate(dateInput.value)) {
+              alert('Please choose a Tuesday-Saturday pickup date at least 5 days from today.');
+              dateInput.value = '';
+              pickupDateField.value = '';
+              return;
+            }
+
+            pickupDateField.value = dateInput.value;
+          };
+
+          dateInput.addEventListener('change', syncPickupDate);
+          dateInput.addEventListener('input', syncPickupDate);
+          dateInput.dataset.bound = 'true';
+        }
       }
     } else {
       // Show Salteñas notice for Salteñas or Mixed cart
       if (bakedGoodsPicker) bakedGoodsPicker.style.display = 'none';
       if (saltenaNotice) saltenaNotice.style.display = 'block';
 
+      if (dateInput) {
+        dateInput.value = '';
+      }
+
       const nextSaltenaDate = getNextSaltenasPickupDate();
       const saltenaDateDisplay = document.getElementById('saltenas-next-date');
       if (saltenaDateDisplay && nextSaltenaDate) {
         const dateKey = toDateKey(nextSaltenaDate);
         saltenaDateDisplay.textContent = `Next available Saturday: ${fmt(nextSaltenaDate)}`;
-        
-        const hiddenInput = document.getElementById('pickup-date');
-        if (hiddenInput) {
-          hiddenInput.value = dateKey;
+
+        if (pickupDateField) {
+          pickupDateField.value = dateKey;
         }
       }
     }
@@ -825,9 +886,10 @@ function handleOrderSubmit(e) {
 
   // Validate pickup date for Baked Goods orders
   const cartType = getCartType();
-  const pickupDateInput = document.getElementById('pickup-date');
+  const pickupDateSelect = document.getElementById('pickup-date-select');
+  const pickupDateField = document.getElementById('pickup-date');
   
-  if (cartType === 'baked-goods' && (!pickupDateInput || !pickupDateInput.value)) {
+  if (cartType === 'baked-goods' && (!pickupDateSelect || !pickupDateSelect.value || !pickupDateField?.value)) {
     alert('Please select a pickup date for your order.');
     return;
   }
@@ -842,8 +904,9 @@ function handleOrderSubmit(e) {
 
   // Add pickup date to summary
   let summary = lines.join(', ') + ` | Total: ${document.getElementById('order-total-amount')?.textContent || ''}`;
-  if (pickupDateInput && pickupDateInput.value) {
-    const d = parseDate(pickupDateInput.value);
+  const pickupDate = pickupDateField?.value || '';
+  if (pickupDate) {
+    const d = parseDate(pickupDate);
     summary += ` | Pickup: ${fmt(d)}`;
   }
 
