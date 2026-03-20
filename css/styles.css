@@ -498,16 +498,39 @@ img { max-width: 100%; height: auto; display: block; }
 
 .pickup-date-input-wrap {
   position: relative;
+  width: 100%;
+  max-width: 100%;
+  overflow: hidden;
 }
 
 .pickup-date-input {
+  display: block;
   width: 100%;
-  padding: .75rem 2.2rem .75rem .75rem;
-  border: 1px solid #ccc;
-  border-radius: .25rem;
+  max-width: 100%;
+  min-height: 44px;
+  padding: .65rem 2.4rem .65rem .9rem;
+  border: 1.5px solid #d9cec6;
+  border-radius: var(--r);
   font-size: 16px;
+  font-family: var(--font-sans);
   background: var(--cream);
   color: var(--brown);
+  -webkit-appearance: none;
+  appearance: none;
+}
+
+.pickup-date-input:focus {
+  outline: none;
+  border-color: var(--terracotta);
+}
+
+.pickup-date-input::-webkit-calendar-picker-indicator {
+  opacity: 0;
+  width: 2.2rem;
+  height: 100%;
+  position: absolute;
+  right: 0;
+  cursor: pointer;
 }
 
 .pickup-date-icon {
