@@ -787,6 +787,10 @@ footer ul li { margin-bottom: .45rem; }
   max-width: 100%;
 }
 
+.home-hero-plain .home-hero-left {
+  text-align: left;
+}
+
 .home-hero-plain .home-hero-left h1 {
   max-width: 540px;
 }
@@ -811,9 +815,24 @@ footer ul li { margin-bottom: .45rem; }
 
 .home-hero-plain .hero-policy {
   max-width: 520px;
-  margin: 0 0 .9rem 0;
+  margin: 0;
   font-size: .95rem;
   line-height: 1.65;
+}
+
+.home-hero-plain .hero-policy-title {
+  margin: 0 0 .55rem 0;
+  font-size: .95rem;
+}
+
+.home-hero-plain .hero-policy-block {
+  margin-bottom: .8rem;
+}
+
+.home-hero-plain .hero-policy-note {
+  margin-top: .25rem;
+  font-size: .9rem;
+  color: var(--muted);
 }
 
 .home-hero-plain .hero-policy strong {
@@ -824,7 +843,12 @@ footer ul li { margin-bottom: .45rem; }
   background: var(--white);
   border-color: #d9cec6;
   color: var(--muted);
+  margin-top: .45rem;
   margin-bottom: 0;
+}
+
+.home-hero-plain .hero-pickup-static {
+  display: inline-flex;
 }
 
 .home-hero-plain .hero-pickup strong {
