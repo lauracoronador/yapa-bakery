@@ -29,6 +29,9 @@ const SITE_CONFIG = {
   // 5) Re-open a date manually (rare):
   // orderStatusOverrides: { '2026-05-30': 'open' },
   // bakedGoodsStatusOverrides: { '2026-06-13': 'open' },
+  // ==========================================================
+  // END OF ADMIN CHEAT SHEET
+  // ==========================================================
 
   // ── Salteñas schedule: every 2 Saturdays, starting March 21, 2026 ──
   pickupStartDate: '2026-03-21',
