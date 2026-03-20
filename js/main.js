@@ -590,10 +590,19 @@ function initBakedGoodsQuickOrder() {
   if (!cartBar) return;
 
   const countEl = document.getElementById('baked-cart-count');
+  const totalEl = document.getElementById('baked-cart-total');
+  const toastEl = document.getElementById('baked-cart-toast');
+  const viewCartBtn = document.getElementById('baked-view-cart');
+  const drawer = document.getElementById('mini-cart-drawer');
+  const drawerOverlay = document.getElementById('mini-cart-overlay');
+  const closeDrawerBtn = document.getElementById('mini-cart-close');
+  const drawerItemsEl = document.getElementById('mini-cart-items');
+  const drawerTotalEl = document.getElementById('mini-cart-total');
   const qtyInputs = [...document.querySelectorAll('.quick-qty-input[data-order-id]')];
   if (qtyInputs.length === 0) return;
 
-  const draft = getOrderDraft();
+  let draft = getOrderDraft();
+  let toastTimer = null;
 
   function normalizeQty(value) {
     const n = parseInt(value, 10);
@@ -601,10 +610,133 @@ function initBakedGoodsQuickOrder() {
     return Math.min(30, n);
   }
 
-  function refreshCount() {
-    const totalItems = qtyInputs.reduce((sum, input) => sum + normalizeQty(input.value), 0);
+  function calculateSummary() {
+    let totalItems = 0;
+    let subtotal = 0;
+
+    qtyInputs.forEach(input => {
+      const itemId = input.dataset.orderId;
+      const qty = normalizeQty(input.value);
+      const item = itemId ? getItemById(itemId) : null;
+      totalItems += qty;
+      subtotal += qty * (item?.price || 0);
+    });
+
+    return { totalItems, subtotal };
+  }
+
+  function renderMiniCart() {
+    if (!drawerItemsEl) return;
+
+    const entries = Object.entries(draft)
+      .map(([itemId, qty]) => ({ itemId, qty: normalizeQty(qty), item: getItemById(itemId) }))
+      .filter(entry => entry.qty > 0 && entry.item);
+
+    if (entries.length === 0) {
+      drawerItemsEl.innerHTML = '<p class="mini-cart-empty">Your cart is empty. Add baked goods to get started.</p>';
+      return;
+    }
+
+    drawerItemsEl.innerHTML = entries.map(({ itemId, qty, item }) => `
+      <div class="mini-cart-item" data-drawer-item-id="${itemId}">
+        <div class="mini-cart-item-name">${item.name}</div>
+        <div class="mini-cart-item-price">$${(item.price * qty).toFixed(2)}</div>
+        <div class="mini-cart-item-controls">
+          <input type="number" min="0" max="30" value="${qty}" data-drawer-qty-id="${itemId}" aria-label="Quantity for ${item.name}">
+          <button type="button" class="mini-cart-item-remove" data-drawer-remove-id="${itemId}">Remove</button>
+        </div>
+      </div>
+    `).join('');
+
+    drawerItemsEl.querySelectorAll('[data-drawer-qty-id]').forEach(input => {
+      input.addEventListener('input', () => {
+        const itemId = input.dataset.drawerQtyId;
+        if (!itemId) return;
+
+        const previousQty = normalizeQty(draft[itemId] || 0);
+        const nextQty = normalizeQty(input.value);
+        input.value = String(nextQty);
+        if (nextQty === 0) {
+          delete draft[itemId];
+        } else {
+          draft[itemId] = nextQty;
+        }
+
+        if (nextQty > previousQty) {
+          const item = getItemById(itemId);
+          const addedQty = nextQty - previousQty;
+          if (item) showAddToast(item.name, addedQty);
+        }
+
+        saveOrderDraft(draft);
+        syncQuickInputsFromDraft();
+        refreshSummary();
+      });
+    });
+
+    drawerItemsEl.querySelectorAll('[data-drawer-remove-id]').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const itemId = btn.dataset.drawerRemoveId;
+        if (!itemId) return;
+
+        delete draft[itemId];
+        saveOrderDraft(draft);
+        syncQuickInputsFromDraft();
+        refreshSummary();
+      });
+    });
+  }
+
+  function refreshSummary() {
+    const { totalItems, subtotal } = calculateSummary();
     if (countEl) countEl.textContent = String(totalItems);
+    if (totalEl) totalEl.textContent = `$${subtotal.toFixed(2)}`;
+    if (drawerTotalEl) drawerTotalEl.textContent = `$${subtotal.toFixed(2)}`;
+    cartBar.classList.toggle('has-items', totalItems > 0);
+    renderMiniCart();
     renderNavCartCount();
+  }
+
+  function showAddToast(itemName, qtyAdded) {
+    if (!toastEl || qtyAdded <= 0) return;
+
+    toastEl.textContent = `Added ${qtyAdded} ${itemName}${qtyAdded > 1 ? 's' : ''} to cart`;
+    toastEl.hidden = false;
+    toastEl.classList.add('show');
+
+    if (toastTimer) {
+      window.clearTimeout(toastTimer);
+    }
+    toastTimer = window.setTimeout(() => {
+      toastEl.classList.remove('show');
+      window.setTimeout(() => {
+        toastEl.hidden = true;
+      }, 200);
+    }, 1700);
+  }
+
+  function syncQuickInputsFromDraft() {
+    qtyInputs.forEach(input => {
+      const itemId = input.dataset.orderId;
+      if (!itemId) return;
+      input.value = String(normalizeQty(draft[itemId] || 0));
+    });
+  }
+
+  function openDrawer() {
+    if (!drawer || !drawerOverlay) return;
+    drawer.classList.add('open');
+    drawer.setAttribute('aria-hidden', 'false');
+    drawerOverlay.hidden = false;
+    document.body.style.overflow = 'hidden';
+  }
+
+  function closeDrawer() {
+    if (!drawer || !drawerOverlay) return;
+    drawer.classList.remove('open');
+    drawer.setAttribute('aria-hidden', 'true');
+    drawerOverlay.hidden = true;
+    document.body.style.overflow = '';
   }
 
   qtyInputs.forEach(input => {
@@ -616,6 +748,7 @@ function initBakedGoodsQuickOrder() {
     }
 
     const syncDraft = () => {
+      const previousQty = normalizeQty(draft[itemId] || 0);
       const qty = normalizeQty(input.value);
       input.value = qty;
       if (qty === 0) {
@@ -623,15 +756,36 @@ function initBakedGoodsQuickOrder() {
       } else {
         draft[itemId] = qty;
       }
+
+      if (qty > previousQty) {
+        const item = getItemById(itemId);
+        const addedQty = qty - previousQty;
+        if (item) showAddToast(item.name, addedQty);
+      }
+
       saveOrderDraft(draft);
-      refreshCount();
+      refreshSummary();
     };
 
     input.addEventListener('input', syncDraft);
     input.addEventListener('change', syncDraft);
   });
 
-  refreshCount();
+  if (viewCartBtn) {
+    viewCartBtn.addEventListener('click', openDrawer);
+  }
+  if (closeDrawerBtn) {
+    closeDrawerBtn.addEventListener('click', closeDrawer);
+  }
+  if (drawerOverlay) {
+    drawerOverlay.addEventListener('click', closeDrawer);
+  }
+  document.addEventListener('keydown', e => {
+    if (e.key === 'Escape') closeDrawer();
+  });
+
+  syncQuickInputsFromDraft();
+  refreshSummary();
 }
 
 function initSaltenasQuickOrder() {
