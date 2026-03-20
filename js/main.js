@@ -415,6 +415,30 @@ function renderCallout() {
   }
 }
 
+function renderOpenPickupStatus() {
+  const s = getOrderStatus();
+  const saltenasStatusEl = document.getElementById('saltenas-open-status');
+  const cartStatusEl = document.getElementById('cart-open-status');
+
+  if (s.status === 'none') {
+    if (saltenasStatusEl) saltenasStatusEl.textContent = 'No upcoming pickups scheduled right now.';
+    if (cartStatusEl) cartStatusEl.textContent = 'No upcoming pickups scheduled right now.';
+    return;
+  }
+
+  let statusText = `Currently taking orders for ${fmt(s.pickup)} pickup.`;
+  if (s.closedPickup) {
+    statusText = `Orders for ${fmtShort(s.closedPickup)} closed. Currently taking orders for ${fmt(s.pickup)} pickup.`;
+  }
+
+  if (saltenasStatusEl) {
+    saltenasStatusEl.textContent = `${statusText} Orders close ${fmtShort(s.closeDate)}.`;
+  }
+  if (cartStatusEl) {
+    cartStatusEl.textContent = statusText;
+  }
+}
+
 // ── Navigation ─────────────────────────────────────────────
 function initNav() {
   const hamburger = document.getElementById('hamburger');
@@ -1161,6 +1185,7 @@ function initFAQ() {
 document.addEventListener('DOMContentLoaded', () => {
   renderBanner();
   renderCallout();
+  renderOpenPickupStatus();
   initNav();
   initBakedGoodsQuickOrder();
   initSaltenasQuickOrder();
