@@ -1068,12 +1068,35 @@ function initCartPage() {
     renderBanner();
   }
 
-  const bakedGoodsItems = getBakedGoodsItems();
-  if (missingSelect) {
-    missingSelect.innerHTML = '<option value="">Select a baked good to add</option>' + bakedGoodsItems
+  function renderMissingItemOptions() {
+    if (!missingSelect) return;
+
+    const draft = getOrderDraft();
+    const selectedIds = new Set(
+      Object.entries(draft)
+        .filter(([, qty]) => (parseInt(qty, 10) || 0) > 0)
+        .map(([itemId]) => itemId)
+    );
+
+    const availableItems = bakedGoodsItems.filter(item => !selectedIds.has(item.id));
+    const previousValue = missingSelect.value;
+
+    const defaultLabel = availableItems.length > 0
+      ? 'Select a baked good to add'
+      : 'All baked goods are already in your cart';
+
+    missingSelect.innerHTML = `<option value="">${defaultLabel}</option>` + availableItems
       .map(item => `<option value="${item.id}">${item.name} — $${item.price.toFixed(2)}</option>`)
       .join('');
+
+    if (availableItems.some(item => item.id === previousValue)) {
+      missingSelect.value = previousValue;
+    }
+
+    if (addMissingBtn) addMissingBtn.disabled = availableItems.length === 0;
   }
+
+  const bakedGoodsItems = getBakedGoodsItems();
 
   function renderPickupDateSection() {
     const cartType = getCartType();
@@ -1265,6 +1288,7 @@ function initCartPage() {
     }
 
     renderPickupDateSection();
+    renderMissingItemOptions();
     renderCartPickupInfoBar();
     updateTotal();
     renderNavCartCount();
