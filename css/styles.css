@@ -1026,7 +1026,7 @@ footer ul li { margin-bottom: .45rem; }
   position: relative;
   overflow: hidden;
   display: flex;
-  align-items: flex-end;
+  align-items: flex-start;
   text-decoration: none;
 }
 .split-tile-bg {
@@ -1052,7 +1052,7 @@ footer ul li { margin-bottom: .45rem; }
 }
 .split-tile-label {
   display: block;
-  font-size: 1.05rem;
+  font-size: 1.2rem;
   font-weight: 900;
   text-transform: uppercase;
   letter-spacing: .14em;
@@ -1062,13 +1062,13 @@ footer ul li { margin-bottom: .45rem; }
 .split-tile-content h2 {
   color: var(--white);
   margin-bottom: .6rem;
-  font-size: clamp(2.25rem, 3.6vw, 2.9rem);
+  font-size: clamp(2.6rem, 4.3vw, 3.3rem);
 }
 .split-tile-content p {
   color: rgba(255,255,255,.82);
-  font-size: 1.35rem;
+  font-size: 1.55rem;
   max-width: 340px;
-  line-height: 1.6;
+  line-height: 1.55;
   margin-bottom: 1.4rem;
 }
 .split-tile .btn-tile {
@@ -1079,7 +1079,7 @@ footer ul li { margin-bottom: .45rem; }
   padding: .6rem 1.4rem;
   border-radius: var(--r);
   font-weight: 600;
-  font-size: 1.25rem;
+  font-size: 1.4rem;
   transition: background .2s, border-color .2s;
   text-decoration: none;
 }
