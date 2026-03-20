@@ -14,6 +14,21 @@ const SITE_CONFIG = {
   pickupIntervalDays: 14,
   scheduleHorizonDays: 548, // Precompute ~18 months of dates.
 
+  // Optional exceptions. Leave empty until needed.
+  // Add dates to SKIP specific pickup Saturdays.
+  // Example: skipPickupDates: ['2026-07-18']
+  skipPickupDates: [],
+
+  // Optional per-date force status. Override calendar logic for that pickup date.
+  // Values: 'open' or 'closed'
+  // Example (capacity reached): orderStatusOverrides: { '2026-05-30': 'closed' }
+  orderStatusOverrides: {},
+
+  // Optional note shown when a pickup is force-closed.
+  // Key must match the pickup date in orderStatusOverrides.
+  // Example: pickupStatusNotes: { '2026-05-30': 'This pickup is at capacity.' }
+  pickupStatusNotes: {},
+
   pickupWindow:   '11am – 1pm',
   pickupLocation: 'Santa Clara County (address shared after payment)',
   orderCloseDays: 5, // Orders close at 11:59 PM PT, 5 days before pickup.
@@ -247,6 +262,7 @@ function getOrderStatus() {
     toDateKey(schedule.currentPickup) !== toDateKey(schedule.nextOpenPickup)
     ? schedule.currentPickup
     : null;
+  const closedPickupReason = getPickupStatusNote(closedPickup);
 
   return {
     status: 'open',
@@ -254,6 +270,7 @@ function getOrderStatus() {
     closeDate,
     nextPickup: nextPickupAfterOpen,
     closedPickup,
+    closedPickupReason,
   };
 }
 
@@ -306,14 +323,38 @@ function getGeneratedSaltenasPickupDates() {
   const horizon = Math.max(interval, SITE_CONFIG.scheduleHorizonDays || 365);
   const end = new Date(getTodayPT());
   end.setDate(end.getDate() + horizon);
+  const skipped = new Set((SITE_CONFIG.skipPickupDates || []).map(String));
 
   const dates = [];
   let cursor = new Date(start);
   while (cursor <= end) {
-    dates.push(new Date(cursor));
+    const key = toDateKey(cursor);
+    if (!skipped.has(key)) {
+      dates.push(new Date(cursor));
+    }
     cursor.setDate(cursor.getDate() + interval);
   }
   return dates;
+}
+
+function getPickupOverrideStatus(pickupDate) {
+  const dateKey = toDateKey(pickupDate);
+  const value = SITE_CONFIG.orderStatusOverrides?.[dateKey];
+  if (value === 'open' || value === 'closed') return value;
+  return null;
+}
+
+function isPickupOpenForOrdering(pickupDate, nowPT) {
+  const forced = getPickupOverrideStatus(pickupDate);
+  if (forced === 'open') return true;
+  if (forced === 'closed') return false;
+  return nowPT <= getPickupCloseDate(pickupDate);
+}
+
+function getPickupStatusNote(pickupDate) {
+  if (!pickupDate) return '';
+  const dateKey = toDateKey(pickupDate);
+  return String(SITE_CONFIG.pickupStatusNotes?.[dateKey] || '').trim();
 }
 
 function getPickupCloseDate(pickupDate) {
@@ -333,7 +374,7 @@ function getSaltenasScheduleContext() {
     .sort((a, b) => a - b);
 
   const currentPickup = upcomingDates[0] || null;
-  const nextOpenPickup = upcomingDates.find(d => nowPT <= getPickupCloseDate(d)) || null;
+  const nextOpenPickup = upcomingDates.find(d => isPickupOpenForOrdering(d, nowPT)) || null;
 
   return {
     nowPT,
@@ -358,8 +399,9 @@ function renderBanner() {
   const dateStr = fmt(s.pickup);
 
   if (s.status === 'open' && s.closedPickup) {
+    const reason = s.closedPickupReason ? ` ${s.closedPickupReason}` : '';
     banner.innerHTML =
-      `Orders for ${fmtShort(s.closedPickup)} pickup closed.` +
+      `Orders for ${fmtShort(s.closedPickup)} pickup closed.${reason}` +
       ` &nbsp;Orders for <strong>${fmtShort(s.pickup)} pickup are OPEN</strong> until ${fmtShort(s.closeDate)}.` +
       ` &nbsp;<a href="saltenas.html">Order Now →</a>`;
   } else if (s.status === 'open') {
@@ -428,7 +470,8 @@ function renderOpenPickupStatus() {
 
   let statusText = `Currently taking orders for ${fmt(s.pickup)} pickup.`;
   if (s.closedPickup) {
-    statusText = `Orders for ${fmtShort(s.closedPickup)} closed. Currently taking orders for ${fmt(s.pickup)} pickup.`;
+    const reason = s.closedPickupReason ? ` ${s.closedPickupReason}` : '';
+    statusText = `Orders for ${fmtShort(s.closedPickup)} closed.${reason} Currently taking orders for ${fmt(s.pickup)} pickup.`;
   }
 
   if (saltenasStatusEl) {
