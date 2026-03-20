@@ -625,6 +625,44 @@ function initBakedGoodsQuickOrder() {
     return { totalItems, subtotal };
   }
 
+  function bumpQtyInput(input, delta) {
+    const current = normalizeQty(input.value);
+    const next = Math.max(0, Math.min(30, current + delta));
+    if (next === current) return;
+    input.value = String(next);
+    input.dispatchEvent(new Event('input', { bubbles: true }));
+  }
+
+  function decorateQuickQtyInput(input) {
+    if (input.closest('.qty-stepper')) return;
+
+    const wrapper = document.createElement('div');
+    wrapper.className = 'qty-stepper';
+
+    const decBtn = document.createElement('button');
+    decBtn.type = 'button';
+    decBtn.className = 'qty-stepper-btn';
+    decBtn.setAttribute('aria-label', 'Decrease quantity');
+    decBtn.textContent = '-';
+
+    const incBtn = document.createElement('button');
+    incBtn.type = 'button';
+    incBtn.className = 'qty-stepper-btn';
+    incBtn.setAttribute('aria-label', 'Increase quantity');
+    incBtn.textContent = '+';
+
+    const parent = input.parentNode;
+    if (!parent) return;
+
+    parent.insertBefore(wrapper, input);
+    wrapper.appendChild(decBtn);
+    wrapper.appendChild(input);
+    wrapper.appendChild(incBtn);
+
+    decBtn.addEventListener('click', () => bumpQtyInput(input, -1));
+    incBtn.addEventListener('click', () => bumpQtyInput(input, 1));
+  }
+
   function renderMiniCart() {
     if (!drawerItemsEl) return;
 
@@ -642,11 +680,35 @@ function initBakedGoodsQuickOrder() {
         <div class="mini-cart-item-name">${item.name}</div>
         <div class="mini-cart-item-price">$${(item.price * qty).toFixed(2)}</div>
         <div class="mini-cart-item-controls">
-          <input type="number" min="0" max="30" value="${qty}" data-drawer-qty-id="${itemId}" aria-label="Quantity for ${item.name}">
+          <div class="qty-stepper qty-stepper-sm">
+            <button type="button" class="qty-stepper-btn" data-drawer-dec-id="${itemId}" aria-label="Decrease quantity for ${item.name}">-</button>
+            <input type="number" min="0" max="30" value="${qty}" data-drawer-qty-id="${itemId}" aria-label="Quantity for ${item.name}">
+            <button type="button" class="qty-stepper-btn" data-drawer-inc-id="${itemId}" aria-label="Increase quantity for ${item.name}">+</button>
+          </div>
           <button type="button" class="mini-cart-item-remove" data-drawer-remove-id="${itemId}">Remove</button>
         </div>
       </div>
     `).join('');
+
+    drawerItemsEl.querySelectorAll('[data-drawer-dec-id]').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const itemId = btn.dataset.drawerDecId;
+        if (!itemId) return;
+        const input = drawerItemsEl.querySelector(`[data-drawer-qty-id="${itemId}"]`);
+        if (!input) return;
+        bumpQtyInput(input, -1);
+      });
+    });
+
+    drawerItemsEl.querySelectorAll('[data-drawer-inc-id]').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const itemId = btn.dataset.drawerIncId;
+        if (!itemId) return;
+        const input = drawerItemsEl.querySelector(`[data-drawer-qty-id="${itemId}"]`);
+        if (!input) return;
+        bumpQtyInput(input, 1);
+      });
+    });
 
     drawerItemsEl.querySelectorAll('[data-drawer-qty-id]').forEach(input => {
       input.addEventListener('input', () => {
@@ -742,6 +804,8 @@ function initBakedGoodsQuickOrder() {
   qtyInputs.forEach(input => {
     const itemId = input.dataset.orderId;
     if (!itemId) return;
+
+    decorateQuickQtyInput(input);
 
     if (draft[itemId]) {
       input.value = normalizeQty(draft[itemId]);
