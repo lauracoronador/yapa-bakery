@@ -496,6 +496,36 @@ img { max-width: 100%; height: auto; display: block; }
   white-space: nowrap;
 }
 
+.pickup-date-input-wrap {
+  position: relative;
+}
+
+.pickup-date-input {
+  width: 100%;
+  padding: .75rem 2.2rem .75rem .75rem;
+  border: 1px solid #ccc;
+  border-radius: .25rem;
+  font-size: 16px;
+  background: var(--cream);
+  color: var(--brown);
+}
+
+.pickup-date-icon {
+  position: absolute;
+  right: .65rem;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 1rem;
+  color: var(--terracotta);
+  pointer-events: none;
+}
+
+.pickup-date-error {
+  margin-top: .45rem;
+  font-size: .84rem;
+  color: #a53b1a;
+}
+
 .submit-btn-wrap { text-align: center; }
 #submit-order-btn {
   width: 100%;

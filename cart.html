@@ -103,7 +103,11 @@
             <div id="baked-goods-date-picker" style="display: none;">
               <h3 style="margin-bottom: 0.5rem; font-size: 1.1rem; color: var(--brown);">Pickup Date *</h3>
               <p style="font-size: 0.85rem; margin-bottom: 0.75rem; color: var(--muted);">Available Tuesday–Saturday, minimum 5 days from today.</p>
-              <input type="date" id="pickup-date-select" style="width: 100%; padding: 0.75rem; border: 1px solid #ccc; border-radius: 0.25rem;">
+              <div class="pickup-date-input-wrap">
+                <input type="date" id="pickup-date-select" class="pickup-date-input">
+                <span class="pickup-date-icon" aria-hidden="true">📅</span>
+              </div>
+              <p id="pickup-date-error" class="pickup-date-error hidden">Please choose a Tuesday-Saturday pickup date at least 5 days from today.</p>
             </div>
           </div>
 
