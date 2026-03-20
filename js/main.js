@@ -29,6 +29,20 @@ const SITE_CONFIG = {
   // Example: pickupStatusNotes: { '2026-05-30': 'This pickup is at capacity.' }
   pickupStatusNotes: {},
 
+  // Optional Baked Goods exceptions. Leave empty until needed.
+  // Add dates to SKIP specific baked-goods pickup dates (Tue-Sat).
+  // Example: bakedGoodsSkipDates: ['2026-06-12']
+  bakedGoodsSkipDates: [],
+
+  // Optional Baked Goods per-date force status.
+  // Values: 'open' or 'closed'
+  // Example: bakedGoodsStatusOverrides: { '2026-06-13': 'closed' }
+  bakedGoodsStatusOverrides: {},
+
+  // Optional note shown when a baked-goods date is force-closed.
+  // Example: bakedGoodsStatusNotes: { '2026-06-13': 'At capacity for this date.' }
+  bakedGoodsStatusNotes: {},
+
   pickupWindow:   '11am – 1pm',
   pickupLocation: 'Santa Clara County (address shared after payment)',
   orderCloseDays: 5, // Orders close at 11:59 PM PT, 5 days before pickup.
@@ -216,7 +230,10 @@ function getAvailableBakedGoodsDates() {
     const minPickupDate = new Date(todayPT);
     minPickupDate.setDate(minPickupDate.getDate() + 5);
 
-    if (d >= minPickupDate) {
+    const dateKey = toDateKey(d);
+    const availability = getBakedGoodsDateAvailability(dateKey);
+
+    if (d >= minPickupDate && availability.allowed) {
       availableDates.push(d);
     }
   }
@@ -231,14 +248,60 @@ function getBakedGoodsMinPickupDateKey() {
 }
 
 function isAllowedBakedGoodsPickupDate(dateKey) {
-  if (!dateKey) return false;
+  return getBakedGoodsDateAvailability(dateKey).allowed;
+}
+
+function getBakedGoodsOverrideStatus(dateKey) {
+  const value = SITE_CONFIG.bakedGoodsStatusOverrides?.[dateKey];
+  if (value === 'open' || value === 'closed') return value;
+  return null;
+}
+
+function getBakedGoodsStatusNote(dateKey) {
+  return String(SITE_CONFIG.bakedGoodsStatusNotes?.[dateKey] || '').trim();
+}
+
+function getBakedGoodsDateAvailability(dateKey) {
+  if (!dateKey) {
+    return {
+      allowed: false,
+      message: 'Please choose a pickup date.',
+    };
+  }
 
   const selected = parseDate(dateKey);
   const minDate = parseDate(getBakedGoodsMinPickupDateKey());
   const dayOfWeek = selected.getDay();
 
   const isAllowedWeekday = dayOfWeek >= 2 && dayOfWeek <= 6; // Tue-Sat
-  return isAllowedWeekday && selected >= minDate;
+  if (!isAllowedWeekday || selected < minDate) {
+    return {
+      allowed: false,
+      message: 'Please choose a Tuesday-Saturday pickup date at least 5 days from today.',
+    };
+  }
+
+  const skipped = new Set((SITE_CONFIG.bakedGoodsSkipDates || []).map(String));
+  if (skipped.has(dateKey)) {
+    return {
+      allowed: false,
+      message: 'That baked-goods pickup date is unavailable. Please choose another date.',
+    };
+  }
+
+  const override = getBakedGoodsOverrideStatus(dateKey);
+  if (override === 'closed') {
+    const note = getBakedGoodsStatusNote(dateKey);
+    return {
+      allowed: false,
+      message: note || 'That baked-goods pickup date is closed. Please choose another date.',
+    };
+  }
+
+  return {
+    allowed: true,
+    message: '',
+  };
 }
 
 function renderNavCartCount() {
@@ -1191,11 +1254,12 @@ function handleOrderSubmit(e) {
   if (cartType === 'baked-goods') {
     const selectedDate = pickupDateSelect?.value || '';
     const selectedFieldDate = pickupDateField?.value || '';
-    const validDate = selectedDate && isAllowedBakedGoodsPickupDate(selectedDate);
+    const availability = getBakedGoodsDateAvailability(selectedDate);
+    const validDate = selectedDate && availability.allowed;
 
     if (!selectedDate || !selectedFieldDate || !validDate) {
       if (pickupDateError) pickupDateError.classList.remove('hidden');
-      alert('Please choose a Tuesday-Saturday pickup date at least 5 days from today.');
+      alert(availability.message || 'That pickup date is unavailable. Please choose another date.');
       return;
     }
   }
