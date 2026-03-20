@@ -1374,6 +1374,7 @@ footer ul li { margin-bottom: .45rem; }
 }
 
 .qty-stepper .quick-qty-input,
+.qty-stepper .qty-input,
 .qty-stepper .mini-cart-item-controls input {
   border: 0;
   border-left: 1px solid #d9cec6;
@@ -1592,6 +1593,7 @@ footer ul li { margin-bottom: .45rem; }
   }
 
   .quick-qty-input,
+  .qty-stepper .qty-input,
   .mini-cart-item-controls input {
     font-size: 16px;
   }

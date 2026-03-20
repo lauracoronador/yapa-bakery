@@ -1039,19 +1039,51 @@ function initCartPage() {
           </div>
           <div class="item-price-tag">$${item.price.toFixed(2)}</div>
           <div class="qty-wrap">
-            <input
-              type="number"
-              class="qty-input form-group"
-              name="${item.id}"
-              id="qty-${item.id}"
-              value="${qty}" min="0" max="30"
-              data-price="${item.price}"
-              data-name="${item.name}"
-              aria-label="Quantity for ${item.name}"
-            >
+            <div class="qty-stepper qty-stepper-sm">
+              <button type="button" class="qty-stepper-btn" data-cart-dec-id="${item.id}" aria-label="Decrease quantity for ${item.name}">-</button>
+              <input
+                type="number"
+                class="qty-input form-group"
+                name="${item.id}"
+                id="qty-${item.id}"
+                value="${qty}" min="0" max="30"
+                data-price="${item.price}"
+                data-name="${item.name}"
+                aria-label="Quantity for ${item.name}"
+              >
+              <button type="button" class="qty-stepper-btn" data-cart-inc-id="${item.id}" aria-label="Increase quantity for ${item.name}">+</button>
+            </div>
           </div>
         </div>
       `).join('');
+
+      function bumpCartQtyInput(input, delta) {
+        const current = Math.max(0, Math.min(30, parseInt(input.value, 10) || 0));
+        const next = Math.max(0, Math.min(30, current + delta));
+        if (next === current) return;
+        input.value = String(next);
+        input.dispatchEvent(new Event('input', { bubbles: true }));
+      }
+
+      cartItemsEl.querySelectorAll('[data-cart-dec-id]').forEach(btn => {
+        btn.addEventListener('click', () => {
+          const itemId = btn.dataset.cartDecId;
+          if (!itemId) return;
+          const input = cartItemsEl.querySelector(`#qty-${itemId}`);
+          if (!input) return;
+          bumpCartQtyInput(input, -1);
+        });
+      });
+
+      cartItemsEl.querySelectorAll('[data-cart-inc-id]').forEach(btn => {
+        btn.addEventListener('click', () => {
+          const itemId = btn.dataset.cartIncId;
+          if (!itemId) return;
+          const input = cartItemsEl.querySelector(`#qty-${itemId}`);
+          if (!input) return;
+          bumpCartQtyInput(input, 1);
+        });
+      });
 
       cartItemsEl.querySelectorAll('.qty-input').forEach(input => {
         const sync = () => {
