@@ -671,7 +671,7 @@ function initBakedGoodsQuickOrder() {
       .filter(entry => entry.qty > 0 && entry.item);
 
     if (entries.length === 0) {
-      drawerItemsEl.innerHTML = '<p class="mini-cart-empty">Your cart is empty. Add baked goods to get started.</p>';
+      drawerItemsEl.innerHTML = '<p class="mini-cart-empty">Your cart is empty. Add items to get started.</p>';
       return;
     }
 
@@ -853,6 +853,9 @@ function initBakedGoodsQuickOrder() {
 }
 
 function initSaltenasQuickOrder() {
+  // Enhanced quick-order UX (sticky bar + drawer) handles Saltenas when present.
+  if (document.getElementById('baked-view-cart')) return;
+
   const qtyInputs = [...document.querySelectorAll('.saltenas-quick-order .quick-qty-input[data-order-id]')];
   if (qtyInputs.length === 0) return;
 

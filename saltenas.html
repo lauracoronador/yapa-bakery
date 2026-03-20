@@ -65,10 +65,19 @@
               <input type="number" id="quick-saltena-12" class="quick-qty-input" data-order-id="saltena-12" value="0" min="0" max="30">
             </div>
           </div>
-          <a href="cart.html" class="btn btn-primary">Go to Your Order →</a>
         </div>
       </div>
     </section>
+
+    <div class="quick-cart-bar" id="baked-cart-bar">
+      <div class="quick-cart-copy">
+        <strong id="baked-cart-count">0</strong> items • <span id="baked-cart-total">$0.00</span>
+      </div>
+      <div class="quick-cart-actions">
+        <button type="button" class="btn btn-outline" id="baked-view-cart">View Cart</button>
+        <a href="cart.html" class="btn btn-primary">Checkout →</a>
+      </div>
+    </div>
 
     <!-- What's a Salteña? -->
     <section class="section">
@@ -128,6 +137,22 @@
     </section>
 
   </main>
+
+  <div class="mini-cart-overlay" id="mini-cart-overlay" hidden></div>
+  <div class="cart-toast" id="baked-cart-toast" role="status" aria-live="polite" hidden></div>
+  <aside class="mini-cart-drawer" id="mini-cart-drawer" aria-hidden="true" aria-label="Mini cart" role="dialog">
+    <div class="mini-cart-header">
+      <h2>Your Cart</h2>
+      <button type="button" class="mini-cart-close" id="mini-cart-close" aria-label="Close cart">&times;</button>
+    </div>
+    <div class="mini-cart-body" id="mini-cart-items">
+      <p class="mini-cart-empty">Your cart is empty. Add items to get started.</p>
+    </div>
+    <div class="mini-cart-footer">
+      <div class="mini-cart-subtotal">Subtotal: <strong id="mini-cart-total">$0.00</strong></div>
+      <a href="cart.html" class="btn btn-primary">Checkout →</a>
+    </div>
+  </aside>
 
   <footer>
     <div class="footer-inner">
