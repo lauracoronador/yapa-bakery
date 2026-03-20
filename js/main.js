@@ -9,6 +9,27 @@
    ============================================================ */
 
 const SITE_CONFIG = {
+  // ==========================================================
+  // ADMIN CHEAT SHEET (copy/paste examples)
+  // ==========================================================
+  // 1) Skip one Saltenas pickup Saturday:
+  // skipPickupDates: ['2026-07-18'],
+  //
+  // 2) Force-close one Saltenas pickup (for capacity):
+  // orderStatusOverrides: { '2026-05-30': 'closed' },
+  // pickupStatusNotes: { '2026-05-30': 'This pickup is at capacity.' },
+  //
+  // 3) Skip one Baked Goods date:
+  // bakedGoodsSkipDates: ['2026-06-12'],
+  //
+  // 4) Force-close one Baked Goods date (for capacity):
+  // bakedGoodsStatusOverrides: { '2026-06-13': 'closed' },
+  // bakedGoodsStatusNotes: { '2026-06-13': 'At capacity for this date.' },
+  //
+  // 5) Re-open a date manually (rare):
+  // orderStatusOverrides: { '2026-05-30': 'open' },
+  // bakedGoodsStatusOverrides: { '2026-06-13': 'open' },
+
   // ── Salteñas schedule: every 2 Saturdays, starting March 21, 2026 ──
   pickupStartDate: '2026-03-21',
   pickupIntervalDays: 14,
@@ -451,6 +472,18 @@ function getSaltenasScheduleContext() {
 function renderBanner() {
   const banner = document.getElementById('pickup-banner');
   if (!banner) return;
+
+  const page = location.pathname.split('/').pop() || 'index.html';
+  const isCartPage = page === 'cart.html';
+  const cartType = getCartType();
+  const cartHasSaltenas = cartType === 'saltenas' || cartType === 'mixed';
+
+  if (isCartPage && !cartHasSaltenas) {
+    banner.style.display = 'none';
+    return;
+  }
+
+  banner.style.display = '';
 
   const s = getOrderStatus();
 
@@ -997,6 +1030,7 @@ function initCartPage() {
   const cartClosed = document.getElementById('cart-closed');
   const cartEmpty = document.getElementById('cart-empty');
   const cartItemsEl = document.getElementById('cart-items');
+  const cartInfoBar = document.querySelector('#cart-open .order-info-bar');
   const missingSelect = document.getElementById('missing-item-select');
   const missingQty = document.getElementById('missing-item-qty');
   const addMissingBtn = document.getElementById('add-missing-item');
@@ -1022,6 +1056,17 @@ function initCartPage() {
   if (pdEl) pdEl.textContent = `${fmt(s.pickup)}, ${SITE_CONFIG.pickupWindow}`;
   const cdEl = document.getElementById('close-date-display');
   if (cdEl) cdEl.textContent = fmt(s.closeDate);
+
+  function renderCartPickupInfoBar() {
+    const cartType = getCartType();
+    const hasSaltenas = cartType === 'saltenas' || cartType === 'mixed';
+
+    if (cartInfoBar) {
+      cartInfoBar.style.display = hasSaltenas ? 'block' : 'none';
+    }
+
+    renderBanner();
+  }
 
   const bakedGoodsItems = getBakedGoodsItems();
   if (missingSelect) {
@@ -1132,6 +1177,7 @@ function initCartPage() {
       if (cartOpen) cartOpen.classList.add('hidden');
       updateTotal();
       renderNavCartCount();
+      renderCartPickupInfoBar();
       return;
     }
 
@@ -1219,6 +1265,7 @@ function initCartPage() {
     }
 
     renderPickupDateSection();
+    renderCartPickupInfoBar();
     updateTotal();
     renderNavCartCount();
   }
