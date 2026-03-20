@@ -2,40 +2,21 @@
    YAPA BAKERY — main.js
    ============================================================
    SETUP CHECKLIST:
-   1. Update pickupDates array with your actual Saturday dates
-   2. Replace stripePaymentLink with your Stripe Payment Link URL
+  1. Replace stripePaymentLink with your Stripe Payment Link URL
       (Create at: dashboard.stripe.com → Payment Links)
-   3. Replace googleFormUrl with your Google Form URL
-   4. Update menu prices as needed
+  2. Replace googleFormUrl with your Google Form URL
+  3. Update menu prices as needed
    ============================================================ */
 
 const SITE_CONFIG = {
-  // ── Upcoming Saturday pickup dates (biweekly from March 21, 2026) ──
-  pickupDates: [
-    '2026-03-21',
-    '2026-04-04',
-    '2026-04-18',
-    '2026-05-02',
-    '2026-05-16',
-    '2026-05-30',
-    '2026-06-13',
-    '2026-06-27',
-    '2026-07-11',
-    '2026-07-25',
-    '2026-08-08',
-    '2026-08-22',
-  ],
+  // ── Salteñas schedule: every 2 Saturdays, starting March 21, 2026 ──
+  pickupStartDate: '2026-03-21',
+  pickupIntervalDays: 14,
+  scheduleHorizonDays: 548, // Precompute ~18 months of dates.
 
   pickupWindow:   '11am – 1pm',
   pickupLocation: 'Santa Clara County (address shared after payment)',
-  orderOpenDays:  10,  // days before pickup that orders open (not used for new flow)
-  orderCloseDays: 5,   // days before pickup that orders close (not used for new flow)
-
-  // Optional per-pickup status override: use when you need to keep a date open past the normal cutoff.
-  // Supported values: 'open', 'closed'
-  orderStatusOverrides: {
-    '2026-03-21': 'open',
-  },
+  orderCloseDays: 5, // Orders close at 11:59 PM PT, 5 days before pickup.
 
   // ── Stripe Payment Link ── (replace with your link)
   stripePaymentLink: 'https://buy.stripe.com/REPLACE_WITH_YOUR_LINK',
@@ -173,63 +154,8 @@ function getCartType() {
 // ── Salteñas Pickup Date Logic ─────────────────────────────
 // Returns next eligible Salteña Saturday with Monday 11:59 PM cutoff (America/Los_Angeles)
 function getNextSaltenasPickupDate() {
-  const now = new Date();
-  const formatter = new Intl.DateTimeFormat('en-US', {
-    timeZone: 'America/Los_Angeles',
-    year: 'numeric',
-    month: '2-digit',
-    day: '2-digit',
-    hour: '2-digit',
-    minute: '2-digit',
-    second: '2-digit',
-    hour12: false,
-  });
-
-  const parts = formatter.formatToParts(now);
-  const ptMap = {};
-  parts.forEach(({ type, value }) => {
-    ptMap[type] = value;
-  });
-  const currentYear = parseInt(ptMap.year, 10);
-  const currentMonth = parseInt(ptMap.month, 10) - 1;
-  const currentDay = parseInt(ptMap.day, 10);
-  const currentHour = parseInt(ptMap.hour, 10);
-  const currentMinute = parseInt(ptMap.minute, 10);
-  const currentSecond = parseInt(ptMap.second, 10);
-
-  // Create a PT "today"
-  const todayPT = new Date(currentYear, currentMonth, currentDay);
-
-  // Find all eligible Saturdays
-  const upcomingSaturdays = SITE_CONFIG.pickupDates
-    .map(parseDate)
-    .filter(d => d >= todayPT)
-    .sort((a, b) => a - b);
-
-  // For each Saturday, check if its Monday cutoff has passed
-  for (const saturday of upcomingSaturdays) {
-    const mondayBefore = new Date(saturday);
-    mondayBefore.setDate(mondayBefore.getDate() - 5); // Saturday - 5 = Monday
-
-    // Create PT "Monday 11:59:59 PM"
-    const mondayDeadline = new Date(
-      mondayBefore.getFullYear(),
-      mondayBefore.getMonth(),
-      mondayBefore.getDate(),
-      23, 59, 59, 999
-    );
-
-    // Convert current PT time to Date for comparison
-    const nowPT = new Date(currentYear, currentMonth, currentDay, currentHour, currentMinute, currentSecond);
-
-    // If we're before or at the Monday deadline, this Saturday is eligible
-    if (nowPT <= mondayDeadline) {
-      return saturday;
-    }
-  }
-
-  // Fallback to first available (shouldn't reach here)
-  return upcomingSaturdays[0] || null;
+  const schedule = getSaltenasScheduleContext();
+  return schedule.nextOpenPickup || null;
 }
 
 // ── Baked Goods Allowed Dates ──────────────────────────────
@@ -283,28 +209,6 @@ function getAvailableBakedGoodsDates() {
   return availableDates;
 }
 
-function getTodayPT() {
-  const now = new Date();
-  const formatter = new Intl.DateTimeFormat('en-US', {
-    timeZone: 'America/Los_Angeles',
-    year: 'numeric',
-    month: '2-digit',
-    day: '2-digit',
-    hour12: false,
-  });
-
-  const parts = formatter.formatToParts(now);
-  const ptMap = {};
-  parts.forEach(({ type, value }) => {
-    ptMap[type] = value;
-  });
-
-  const year = parseInt(ptMap.year, 10);
-  const month = parseInt(ptMap.month, 10) - 1;
-  const day = parseInt(ptMap.day, 10);
-  return new Date(year, month, day);
-}
-
 function getBakedGoodsMinPickupDateKey() {
   const minDate = new Date(getTodayPT());
   minDate.setDate(minDate.getDate() + 5);
@@ -329,47 +233,28 @@ function renderNavCartCount() {
 }
 
 function getNextPickup() {
-  const t = today();
-  return SITE_CONFIG.pickupDates
-    .map(parseDate)
-    .filter(d => d >= t)
-    .sort((a, b) => a - b)[0] || null;
+  const schedule = getSaltenasScheduleContext();
+  return schedule.currentPickup;
 }
 
 function getOrderStatus() {
-  const pickup = getNextPickup();
-  if (!pickup) return { status: 'none' };
+  const schedule = getSaltenasScheduleContext();
+  if (!schedule.nextOpenPickup) return { status: 'none' };
 
-  const t = today();
-  const daysUntil = Math.round((pickup - t) / MS_DAY);
-  const pickupKey = toDateKey(pickup);
-  const forcedStatus = SITE_CONFIG.orderStatusOverrides?.[pickupKey];
+  const closeDate = getPickupCloseDate(schedule.nextOpenPickup);
+  const nextPickupAfterOpen = schedule.upcomingDates.find(d => d > schedule.nextOpenPickup) || null;
+  const closedPickup = schedule.currentPickup && schedule.nextOpenPickup &&
+    toDateKey(schedule.currentPickup) !== toDateKey(schedule.nextOpenPickup)
+    ? schedule.currentPickup
+    : null;
 
-  if (forcedStatus === 'open') {
-    const closeDate = new Date(pickup - SITE_CONFIG.orderCloseDays * MS_DAY);
-    return { status: 'open', pickup, daysUntil, closeDate };
-  }
-  if (forcedStatus === 'closed') {
-    const next = SITE_CONFIG.pickupDates
-      .map(parseDate)
-      .filter(d => d > pickup)
-      .sort((a, b) => a - b)[0] || null;
-    return { status: 'closed', pickup, nextPickup: next };
-  }
-
-  if (daysUntil > SITE_CONFIG.orderOpenDays) {
-    const opensOn = new Date(pickup - SITE_CONFIG.orderOpenDays * MS_DAY);
-    return { status: 'not-open', pickup, daysUntil, opensOn };
-  }
-  if (daysUntil <= SITE_CONFIG.orderCloseDays) {
-    const next = SITE_CONFIG.pickupDates
-      .map(parseDate)
-      .filter(d => d > pickup)
-      .sort((a, b) => a - b)[0] || null;
-    return { status: 'closed', pickup, nextPickup: next };
-  }
-  const closeDate = new Date(pickup - SITE_CONFIG.orderCloseDays * MS_DAY);
-  return { status: 'open', pickup, daysUntil, closeDate };
+  return {
+    status: 'open',
+    pickup: schedule.nextOpenPickup,
+    closeDate,
+    nextPickup: nextPickupAfterOpen,
+    closedPickup,
+  };
 }
 
 function fmt(d) {
@@ -377,6 +262,85 @@ function fmt(d) {
 }
 function fmtShort(d) {
   return d.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+}
+
+function getNowPT() {
+  const now = new Date();
+  const formatter = new Intl.DateTimeFormat('en-US', {
+    timeZone: 'America/Los_Angeles',
+    year: 'numeric',
+    month: '2-digit',
+    day: '2-digit',
+    hour: '2-digit',
+    minute: '2-digit',
+    second: '2-digit',
+    hour12: false,
+  });
+
+  const parts = formatter.formatToParts(now);
+  const ptMap = {};
+  parts.forEach(({ type, value }) => {
+    ptMap[type] = value;
+  });
+
+  return new Date(
+    parseInt(ptMap.year, 10),
+    parseInt(ptMap.month, 10) - 1,
+    parseInt(ptMap.day, 10),
+    parseInt(ptMap.hour, 10),
+    parseInt(ptMap.minute, 10),
+    parseInt(ptMap.second, 10),
+    0
+  );
+}
+
+function getTodayPT() {
+  const d = getNowPT();
+  d.setHours(0, 0, 0, 0);
+  return d;
+}
+
+function getGeneratedSaltenasPickupDates() {
+  const start = parseDate(SITE_CONFIG.pickupStartDate);
+  const interval = Math.max(1, SITE_CONFIG.pickupIntervalDays || 14);
+  const horizon = Math.max(interval, SITE_CONFIG.scheduleHorizonDays || 365);
+  const end = new Date(getTodayPT());
+  end.setDate(end.getDate() + horizon);
+
+  const dates = [];
+  let cursor = new Date(start);
+  while (cursor <= end) {
+    dates.push(new Date(cursor));
+    cursor.setDate(cursor.getDate() + interval);
+  }
+  return dates;
+}
+
+function getPickupCloseDate(pickupDate) {
+  const closeDate = new Date(pickupDate);
+  closeDate.setDate(closeDate.getDate() - SITE_CONFIG.orderCloseDays);
+  closeDate.setHours(23, 59, 59, 999);
+  return closeDate;
+}
+
+function getSaltenasScheduleContext() {
+  const nowPT = getNowPT();
+  const todayPT = new Date(nowPT);
+  todayPT.setHours(0, 0, 0, 0);
+
+  const upcomingDates = getGeneratedSaltenasPickupDates()
+    .filter(d => d >= todayPT)
+    .sort((a, b) => a - b);
+
+  const currentPickup = upcomingDates[0] || null;
+  const nextOpenPickup = upcomingDates.find(d => nowPT <= getPickupCloseDate(d)) || null;
+
+  return {
+    nowPT,
+    upcomingDates,
+    currentPickup,
+    nextOpenPickup,
+  };
 }
 
 // ── Pickup Banner ──────────────────────────────────────────
@@ -393,15 +357,16 @@ function renderBanner() {
 
   const dateStr = fmt(s.pickup);
 
-  if (s.status === 'open') {
+  if (s.status === 'open' && s.closedPickup) {
+    banner.innerHTML =
+      `Orders for ${fmtShort(s.closedPickup)} pickup closed.` +
+      ` &nbsp;Orders for <strong>${fmtShort(s.pickup)} pickup are OPEN</strong> until ${fmtShort(s.closeDate)}.` +
+      ` &nbsp;<a href="saltenas.html">Order Now →</a>`;
+  } else if (s.status === 'open') {
     banner.innerHTML =
       `<strong>Next Salteñas Pickup: ${dateStr} &nbsp;·&nbsp; ${SITE_CONFIG.pickupWindow}</strong>
        &nbsp;·&nbsp; Orders close ${fmtShort(s.closeDate)}
        &nbsp;<a href="saltenas.html">Order Now →</a>`;
-  } else if (s.status === 'not-open') {
-    banner.innerHTML =
-      `<strong>Next Salteñas Pickup: ${dateStr}</strong>
-       &nbsp;·&nbsp; Orders open ${fmtShort(s.opensOn)}`;
   } else {
     const nextMsg = s.nextPickup
       ? ` &nbsp;·&nbsp; Next pickup: ${fmt(s.nextPickup)}`
@@ -439,9 +404,11 @@ function renderCallout() {
   dateEl.textContent = fmt(s.pickup);
 
   if (s.status === 'open' && msgEl) {
-    msgEl.textContent = `Orders close ${fmtShort(s.closeDate)} — don't wait!`;
-  } else if (s.status === 'not-open' && msgEl) {
-    msgEl.textContent = `Orders open ${fmtShort(s.opensOn)}. Mark your calendar!`;
+    if (s.closedPickup) {
+      msgEl.textContent = `Orders for ${fmtShort(s.closedPickup)} are closed. ${fmtShort(s.pickup)} pickup is now open.`;
+    } else {
+      msgEl.textContent = `Orders close ${fmtShort(s.closeDate)} — don't wait!`;
+    }
   } else if (msgEl) {
     const nextMsg = s.nextPickup ? `Next pickup: ${fmt(s.nextPickup)}` : 'Stay tuned for the next date.';
     msgEl.textContent = `Orders closed for this pickup. ${nextMsg}`;
@@ -501,9 +468,7 @@ function initOrderForm() {
 
     const msgEl = document.getElementById('closed-msg');
     if (msgEl) {
-      if (s.status === 'not-open') {
-        msgEl.textContent = `Orders for the ${fmt(s.pickup)} pickup open on ${fmt(s.opensOn)}.`;
-      } else if (s.status === 'closed') {
+      if (s.status === 'closed') {
         const nextMsg = s.nextPickup ? ` Next pickup: ${fmt(s.nextPickup)}.` : '';
         msgEl.textContent = `Orders are closed for the ${fmt(s.pickup)} pickup.${nextMsg}`;
       } else {
@@ -913,9 +878,7 @@ function initCartPage() {
 
     const msgEl = document.getElementById('closed-msg');
     if (msgEl) {
-      if (s.status === 'not-open') {
-        msgEl.textContent = `Orders for the ${fmt(s.pickup)} pickup open on ${fmt(s.opensOn)}.`;
-      } else if (s.status === 'closed') {
+      if (s.status === 'closed') {
         const nextMsg = s.nextPickup ? ` Next pickup: ${fmt(s.nextPickup)}.` : '';
         msgEl.textContent = `Orders are closed for the ${fmt(s.pickup)} pickup.${nextMsg}`;
       } else {
@@ -974,8 +937,8 @@ function initCartPage() {
             }
 
             if (!isAllowedBakedGoodsPickupDate(dateInput.value)) {
-              alert('Please choose a Tuesday-Saturday pickup date at least 5 days from today.');
-              dateInput.value = '';
+              // On mobile, date inputs can emit intermediate values while the picker opens.
+              // Avoid disruptive alerts here; submit-time validation will still enforce rules.
               pickupDateField.value = '';
               return;
             }
@@ -984,7 +947,6 @@ function initCartPage() {
           };
 
           dateInput.addEventListener('change', syncPickupDate);
-          dateInput.addEventListener('input', syncPickupDate);
           dateInput.dataset.bound = 'true';
         }
       }
