@@ -805,6 +805,11 @@ footer ul li { margin-bottom: .45rem; }
 
 .home-hero-plain .hero-content {
   color: var(--brown);
+  max-width: none;
+  width: 100%;
+  margin: 0;
+  padding-left: 2.5rem;
+  padding-right: 2.5rem;
 }
 
 .home-hero-plain .hero-content h1 {
@@ -846,6 +851,11 @@ footer ul li { margin-bottom: .45rem; }
 @media (max-width: 860px) {
   .home-hero-plain {
     min-height: auto;
+  }
+
+  .home-hero-plain .hero-content {
+    padding-left: 1.25rem;
+    padding-right: 1.25rem;
   }
 
   .home-hero-plain .home-hero-grid {
