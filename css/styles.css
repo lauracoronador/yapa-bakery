@@ -1052,21 +1052,21 @@ footer ul li { margin-bottom: .45rem; }
 }
 .split-tile-label {
   display: block;
-  font-size: .72rem;
-  font-weight: 700;
+  font-size: .9rem;
+  font-weight: 900;
   text-transform: uppercase;
   letter-spacing: .14em;
-  color: rgba(255,255,255,.65);
+  color: rgba(255,255,255,.92);
   margin-bottom: .4rem;
 }
 .split-tile-content h2 {
   color: var(--white);
   margin-bottom: .6rem;
-  font-size: clamp(1.5rem, 2.5vw, 2.1rem);
+  font-size: clamp(1.9rem, 3vw, 2.5rem);
 }
 .split-tile-content p {
   color: rgba(255,255,255,.82);
-  font-size: .97rem;
+  font-size: 1.2rem;
   max-width: 340px;
   line-height: 1.7;
   margin-bottom: 1.4rem;
@@ -1079,7 +1079,7 @@ footer ul li { margin-bottom: .45rem; }
   padding: .6rem 1.4rem;
   border-radius: var(--r);
   font-weight: 600;
-  font-size: .93rem;
+  font-size: 1.1rem;
   transition: background .2s, border-color .2s;
   text-decoration: none;
 }
