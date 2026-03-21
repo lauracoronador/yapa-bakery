@@ -1170,6 +1170,11 @@ footer ul li { margin-bottom: .45rem; }
 }
 .insta-section h2 { margin-bottom: .35rem; }
 .insta-section > p { margin-bottom: 2rem; }
+.insta-helper {
+  max-width: 820px;
+  margin: 0 auto 1rem;
+  font-size: .92rem;
+}
 .insta-grid {
   display: grid;
   grid-template-columns: repeat(6, 1fr);
@@ -1187,10 +1192,28 @@ footer ul li { margin-bottom: .45rem; }
   justify-content: center;
   font-size: 1.6rem;
   color: var(--muted);
+  text-decoration: none;
+  position: relative;
   transition: opacity .2s, transform .2s;
 }
 .insta-item:hover { opacity: .85; transform: scale(1.03); }
 .insta-item img { width: 100%; height: 100%; object-fit: cover; }
+.insta-item video { width: 100%; height: 100%; object-fit: cover; }
+.insta-item.is-video::after {
+  content: '▶';
+  position: absolute;
+  bottom: .45rem;
+  right: .45rem;
+  width: 1.6rem;
+  height: 1.6rem;
+  border-radius: 999px;
+  display: grid;
+  place-items: center;
+  background: rgba(0, 0, 0, .56);
+  color: #fff;
+  font-size: .75rem;
+  pointer-events: none;
+}
 
 /* ===== SALTEÑAS PAGE ===== */
 .saltenas-hero .hero-bg {

@@ -1386,6 +1386,89 @@ function initFAQ() {
   });
 }
 
+// ── Homepage Instagram Local Media Grid ───────────────────
+async function initInstagramLocalFeed() {
+  const feedEl = document.getElementById('insta-feed');
+  if (!feedEl) return;
+
+  const slotNames = ['insta-1', 'insta-2', 'insta-3', 'insta-4', 'insta-5', 'insta-6'];
+  const imageExts = ['jpg', 'jpeg', 'png', 'webp', 'gif'];
+  const videoExts = ['mp4', 'webm', 'mov'];
+
+  const allCandidates = [
+    ...videoExts.map(ext => ({ ext, type: 'video' })),
+    ...imageExts.map(ext => ({ ext, type: 'image' })),
+  ];
+
+  const cacheBuster = `v=${Date.now()}`;
+
+  const fileExists = async (url) => {
+    try {
+      const res = await fetch(url, { method: 'HEAD', cache: 'no-store' });
+      return res.ok;
+    } catch {
+      return false;
+    }
+  };
+
+  const findFirstMediaForSlot = async (slotName) => {
+    for (const candidate of allCandidates) {
+      const path = `Images/${slotName}.${candidate.ext}`;
+      const exists = await fileExists(path);
+      if (exists) {
+        return {
+          path,
+          type: candidate.type,
+          slotName,
+        };
+      }
+    }
+    return null;
+  };
+
+  const createPlaceholder = () => {
+    const placeholder = document.createElement('div');
+    placeholder.className = 'insta-item';
+    placeholder.setAttribute('aria-label', 'Upload a media file to this slot');
+    placeholder.textContent = '📸';
+    return placeholder;
+  };
+
+  const createMediaCard = (media) => {
+    const item = document.createElement('a');
+    item.className = `insta-item${media.type === 'video' ? ' is-video' : ''}`;
+    item.href = 'https://instagram.com/YapaPatisserie';
+    item.target = '_blank';
+    item.rel = 'noopener noreferrer';
+    item.setAttribute('aria-label', `Open ${media.slotName} on Instagram profile`);
+
+    if (media.type === 'video') {
+      const video = document.createElement('video');
+      video.src = `${media.path}?${cacheBuster}`;
+      video.muted = true;
+      video.loop = true;
+      video.playsInline = true;
+      video.autoplay = true;
+      video.preload = 'metadata';
+      item.appendChild(video);
+    } else {
+      const img = document.createElement('img');
+      img.src = `${media.path}?${cacheBuster}`;
+      img.alt = `Yapa Instagram post ${media.slotName}`;
+      item.appendChild(img);
+    }
+
+    return item;
+  };
+
+  const mediaItems = await Promise.all(slotNames.map(findFirstMediaForSlot));
+  feedEl.innerHTML = '';
+
+  mediaItems.forEach(media => {
+    feedEl.appendChild(media ? createMediaCard(media) : createPlaceholder());
+  });
+}
+
 // ── Init ───────────────────────────────────────────────────
 document.addEventListener('DOMContentLoaded', () => {
   renderBanner();
@@ -1397,4 +1480,5 @@ document.addEventListener('DOMContentLoaded', () => {
   initCartPage();
   initOrderForm();
   initFAQ();
+  initInstagramLocalFeed();
 });
