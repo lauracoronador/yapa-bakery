@@ -1170,11 +1170,6 @@ footer ul li { margin-bottom: .45rem; }
 }
 .insta-section h2 { margin-bottom: .35rem; }
 .insta-section > p { margin-bottom: 2rem; }
-.insta-helper {
-  max-width: 820px;
-  margin: 0 auto 1rem;
-  font-size: .92rem;
-}
 .insta-grid {
   display: grid;
   grid-template-columns: repeat(6, 1fr);
