@@ -82,9 +82,9 @@ const SITE_CONFIG = {
     {
       category: 'Salteñas',
       items: [
-        { id: 'saltena-1',  name: 'Salteña',         desc: 'Traditional Bolivian savory pastry, baked fresh',       price: 4.50 },
-        { id: 'saltena-6',  name: 'Salteñas × 6',    desc: 'Half dozen',                                            price: 25.00 },
-        { id: 'saltena-12', name: 'Salteñas × 12',   desc: 'Full dozen — perfect for a gathering',                  price: 48.00 },
+        { id: 'saltena-1',  name: 'Salteña',         desc: 'Traditional Bolivian savory pastry, baked fresh',       price: 7.00 },
+        { id: 'saltena-6',  name: 'Salteñas × 6',    desc: 'Half dozen',                                            price: 42.00 },
+        { id: 'saltena-12', name: 'Salteñas × 12',   desc: 'Full dozen — perfect for a gathering',                  price: 84.00 },
       ],
     },
     {
