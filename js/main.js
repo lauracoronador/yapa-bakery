@@ -1402,20 +1402,50 @@ async function initInstagramLocalFeed() {
 
   const cacheBuster = `v=${Date.now()}`;
 
-  const fileExists = async (url) => {
-    try {
-      const res = await fetch(url, { method: 'HEAD', cache: 'no-store' });
-      return res.ok;
-    } catch {
-      return false;
-    }
-  };
+  const canLoadImage = (url) => new Promise(resolve => {
+    const img = new Image();
+    img.onload = () => resolve(true);
+    img.onerror = () => resolve(false);
+    img.src = url;
+  });
+
+  const canLoadVideo = (url) => new Promise(resolve => {
+    const video = document.createElement('video');
+    const cleanup = () => {
+      video.removeAttribute('src');
+      video.load();
+    };
+
+    const timer = window.setTimeout(() => {
+      cleanup();
+      resolve(false);
+    }, 3500);
+
+    video.onloadeddata = () => {
+      window.clearTimeout(timer);
+      cleanup();
+      resolve(true);
+    };
+    video.onerror = () => {
+      window.clearTimeout(timer);
+      cleanup();
+      resolve(false);
+    };
+
+    video.preload = 'metadata';
+    video.src = url;
+    video.load();
+  });
 
   const findFirstMediaForSlot = async (slotName) => {
     for (const candidate of allCandidates) {
       const path = `Images/${slotName}.${candidate.ext}`;
-      const exists = await fileExists(path);
-      if (exists) {
+      const testUrl = `${path}?${cacheBuster}`;
+      const isLoadable = candidate.type === 'video'
+        ? await canLoadVideo(testUrl)
+        : await canLoadImage(testUrl);
+
+      if (isLoadable) {
         return {
           path,
           type: candidate.type,
